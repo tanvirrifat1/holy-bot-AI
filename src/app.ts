@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './routes';
 import { Morgan } from './shared/morgen';
+import { SubscriptionController } from './app/modules/subscriptation/subscriptation.controller';
 const app = express();
 
 //morgan
@@ -19,11 +20,11 @@ app.use(
 );
 
 //webhook
-// app.post(
-//   '/webhook',
-//   express.raw({ type: 'application/json' }),
-//   PaymentController.stripeWebhookController
-// );
+app.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  SubscriptionController.stripeWebhookController
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

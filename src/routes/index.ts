@@ -5,6 +5,7 @@ import { RequestRoutes } from '../app/modules/request/request.route';
 import { AnswerRoutes } from '../app/modules/Answer/Answer.route';
 import { SettingRoutes } from '../app/modules/setting/setting.route';
 import { PackageRoutes } from '../app/modules/package/package.route';
+import { SubscriptionRoutes } from '../app/modules/subscriptation/subscriptation.route';
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ const apiRoutes = [
   { path: '/answer', route: AnswerRoutes },
   { path: '/setting', route: SettingRoutes },
   { path: '/package', route: PackageRoutes },
+  { path: '/subscription', route: SubscriptionRoutes },
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));
