@@ -6,10 +6,12 @@ const planSchema = new mongoose.Schema<IPackage>({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
+  description: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
   unitAmount: {
     type: Number,
     required: true,

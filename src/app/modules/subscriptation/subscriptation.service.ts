@@ -115,6 +115,8 @@ const cancelSubscriptation = async (userId: string) => {
 
 const getAllSubs = async (query: Record<string, unknown>) => {
   const { page, limit } = query;
+
+  console.log('in');
   const anyConditions: any[] = [{ status: 'active' }];
 
   const whereConditions =
@@ -127,7 +129,7 @@ const getAllSubs = async (query: Record<string, unknown>) => {
 
   // Fetch campaigns
   const result = await Subscriptation.find(whereConditions)
-    .populate('user', 'fullName')
+    .populate('user', 'name email')
     .populate('package', 'name unitAmount interval')
     .sort({ createdAt: -1 })
     .skip(skip)

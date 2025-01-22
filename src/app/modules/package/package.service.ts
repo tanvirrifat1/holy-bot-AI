@@ -23,10 +23,14 @@ const createPackage = async (payload: Partial<IPackage>) => {
       throw new ApiError(StatusCodes.BAD_REQUEST, 'package already exist');
     }
 
+    const descriptionString = Array.isArray(payload.description)
+      ? payload.description.join(' ') // Join elements with a space
+      : payload.description;
+
     // Create Stripe product
     const product = await stripe.products.create({
       name: payload.name,
-      description: payload.description,
+      description: descriptionString,
     });
 
     // Handle recurring intervals, including custom 'half-year'
@@ -97,10 +101,15 @@ const updatePackage = async (
       throw new ApiError(StatusCodes.NOT_FOUND, 'Package not found');
     }
 
-    if (updates.name || updates.description) {
+    // Ensure description is always a string for Stripe
+    const updatedDescription = Array.isArray(updates.description)
+      ? updates.description.join(' ') // Join array elements if description is an array
+      : updates.description; // Use as-is if it's already a string
+
+    if (updates.name || updatedDescription) {
       await stripe.products.update(plan.productId, {
         name: updates.name || plan.name,
-        description: updates.description || plan.description,
+        description: updatedDescription,
       });
     }
 
@@ -119,6 +128,7 @@ const updatePackage = async (
       updates.priceId = newPrice.id;
     }
 
+    // Update the plan in the database
     const updatedPlan = await Package.findByIdAndUpdate(planId, updates, {
       new: true,
       runValidators: true,

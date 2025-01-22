@@ -11,7 +11,11 @@ router.post(
   SubscriptionController.createCheckoutSessionController
 );
 
-router.get('/get-subs', SubscriptionController.getAllSubs);
+router.get(
+  '/get-subs-admin',
+  auth(USER_ROLES.ADMIN),
+  SubscriptionController.getAllSubs
+);
 
 router.get(
   '/get-all',
