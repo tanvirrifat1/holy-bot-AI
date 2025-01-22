@@ -18,4 +18,4 @@ const questionSchema = new Schema<IRequest>(
   }
 );
 
-export const Request = model<IRequest>('Request', questionSchema);
+export const Request = model<IRequest>('Question', questionSchema);

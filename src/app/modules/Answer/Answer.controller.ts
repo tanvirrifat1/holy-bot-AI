@@ -15,6 +15,17 @@ const createAnswer = catchAsync(async (req, res) => {
   });
 });
 
+const getAllAnswers = catchAsync(async (req, res) => {
+  const result = await AnswerService.getAllAnswers(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Answer retrieved successfully',
+    data: result,
+  });
+});
+
 export const AnswerController = {
   createAnswer,
+  getAllAnswers,
 };

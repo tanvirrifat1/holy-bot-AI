@@ -7,7 +7,11 @@ const router = express.Router();
 
 router.post('/create', auth(USER_ROLES.USER), AnswerController.createAnswer);
 
-// router.get('/get-all', auth(USER_ROLES.USER), RequestController.getAllRequests);
+router.get(
+  '/get-all-answer/:id',
+  auth(USER_ROLES.USER),
+  AnswerController.getAllAnswers
+);
 
 // router.get(
 //   '/get-all-admin',

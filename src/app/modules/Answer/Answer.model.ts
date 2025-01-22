@@ -14,7 +14,7 @@ const answerSchema = new Schema<IAnswer>(
     },
     questionId: {
       type: Schema.Types.ObjectId,
-      ref: 'Request',
+      ref: 'Question',
       required: true,
     },
   },
