@@ -3,6 +3,7 @@ import { stripe } from './stripe';
 import { Types } from 'mongoose';
 import { User } from '../app/modules/user/user.model';
 import { Subscriptation } from '../app/modules/subscriptation/subscriptation.model';
+import { sendNotifications } from '../helpers/notificationHelper';
 
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
@@ -58,6 +59,16 @@ const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
   await User.findByIdAndUpdate(user?._id, {
     $set: { subscription: true },
   });
+
+  if (user) {
+    const result = await User.findById(user._id);
+    const data = {
+      text: `Payment received for user, ${result?.name}`,
+      type: 'ADMIN',
+    };
+
+    await sendNotifications(data);
+  }
 };
 
 // Function to handle invoice.payment_failed event
