@@ -116,7 +116,6 @@ const cancelSubscriptation = async (userId: string) => {
 const getAllSubs = async (query: Record<string, unknown>) => {
   const { page, limit } = query;
 
-  console.log('in');
   const anyConditions: any[] = [{ status: 'active' }];
 
   const whereConditions =

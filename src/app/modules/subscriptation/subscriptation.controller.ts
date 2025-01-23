@@ -8,9 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 
 const createCheckoutSessionController = async (req: Request, res: Response) => {
   const userId = req.user.id;
-
   const { packageId } = req.body;
-
   try {
     const sessionUrl = await SubscriptationService.createCheckoutSessionService(
       userId,
