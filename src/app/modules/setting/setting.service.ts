@@ -54,7 +54,7 @@ const createPrivacyPolicy = async (payload: Partial<IPrivacy>) => {
 };
 
 const getPrivacyPolicy = async () => {
-  const term = await TermsAndCondition.findOne();
+  const term = await Privacy.findOne();
   if (!term) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Privacy policy not found.');
   }
@@ -71,7 +71,7 @@ const createTrustAndSafety = async (payload: Partial<ITrust>) => {
       const updatedTerm = await existingTerm.save();
       return updatedTerm;
     } else {
-      const newTerm = await Privacy.create(payload);
+      const newTerm = await Trust.create(payload);
       return newTerm;
     }
   } catch (error) {

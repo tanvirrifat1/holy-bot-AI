@@ -31,6 +31,18 @@ const getAllRequests = catchAsync(async (req, res) => {
   });
 });
 
+const reactRequest = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+
+  const result = await RequestService.reactRequest(userId, req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Request retrieved successfully',
+    data: result,
+  });
+});
+
 const getAllRequestsForAdmin = catchAsync(async (req, res) => {
   const result = await RequestService.getAllRequestsForAdmin(req.query);
   sendResponse(res, {
@@ -67,4 +79,5 @@ export const RequestController = {
   getAllRequestsForAdmin,
   deleteRequest,
   getSingleRequest,
+  reactRequest,
 };

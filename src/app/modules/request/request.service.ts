@@ -58,6 +58,56 @@ const getAllRequests = async (
     },
   };
 };
+
+const reactRequest = async (userId: string, query: Record<string, unknown>) => {
+  const { page, limit, searchTerm, ...filterData } = query;
+
+  const anyConditions: any[] = [];
+
+  anyConditions.push({ user: userId });
+
+  if (searchTerm) {
+    anyConditions.push({
+      $or: [{ question: { $regex: searchTerm, $options: 'i' } }],
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    const filterConditions = Object.entries(filterData).map(
+      ([field, value]) => ({ [field]: value })
+    );
+    anyConditions.push({ $and: filterConditions });
+  }
+
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  anyConditions.push({ createdAt: { $gte: oneDayAgo } });
+
+  const whereConditions =
+    anyConditions.length > 0 ? { $and: anyConditions } : {};
+
+  // Pagination setup
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  const result = await Request.find(whereConditions)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+
+  const count = await Request.countDocuments(whereConditions);
+
+  return {
+    result,
+    meta: {
+      page: pages,
+      total: count,
+    },
+  };
+};
+
 const getAllRequestsForAdmin = async (query: Record<string, unknown>) => {
   const { page, limit, searchTerm, ...filterData } = query;
   const anyConditions: any[] = [];
@@ -125,4 +175,5 @@ export const RequestService = {
   getAllRequestsForAdmin,
   deleteRequest,
   getSingleRequest,
+  reactRequest,
 };

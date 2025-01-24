@@ -5,8 +5,6 @@ const createUserZodSchema = z.object({
   email: z.string({ required_error: 'Email name is required' }),
   phone: z.string({ required_error: 'Phone name is required' }),
   password: z.string({ required_error: 'Password is required' }),
-  address: z.string().optional(),
-  postCode: z.string().optional(),
 });
 
 const updateZodSchema = z.object({

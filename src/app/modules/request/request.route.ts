@@ -10,6 +10,12 @@ router.post('/create', auth(USER_ROLES.USER), RequestController.createRequest);
 router.get('/get-all', auth(USER_ROLES.USER), RequestController.getAllRequests);
 
 router.get(
+  '/get-recent',
+  auth(USER_ROLES.USER),
+  RequestController.reactRequest
+);
+
+router.get(
   '/get-all-admin',
   auth(USER_ROLES.ADMIN),
   RequestController.getAllRequestsForAdmin
