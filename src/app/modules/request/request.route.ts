@@ -16,6 +16,12 @@ router.get(
 );
 
 router.get(
+  '/get-req-history',
+  auth(USER_ROLES.USER),
+  RequestController.getAllRequestsHistory
+);
+
+router.get(
   '/get-all-admin',
   auth(USER_ROLES.ADMIN),
   RequestController.getAllRequestsForAdmin

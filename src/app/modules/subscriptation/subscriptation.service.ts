@@ -75,7 +75,21 @@ const handleStripeWebhookService = async (event: Stripe.Event) => {
 };
 
 const getSubscribtionService = async (userId: string) => {
-  const subscription = await Subscriptation.findOne({ user: userId });
+  const isUser = await User.findById(userId);
+
+  if (!isUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found');
+  }
+
+  const subscription = await Subscriptation.findOne({ user: userId })
+    .populate({
+      path: 'user',
+      select: 'name email subscription',
+    })
+    .populate({
+      path: 'package',
+    });
+
   if (!subscription) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscribtion not found');
   }

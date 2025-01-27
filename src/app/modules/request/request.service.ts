@@ -35,9 +35,15 @@ const getAllRequests = async (
     anyConditions.push({ $and: filterConditions });
   }
 
+  // Filter for requests created more than 24 hours ago
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  anyConditions.push({ createdAt: { $lt: oneDayAgo } });
+
   const whereConditions =
     anyConditions.length > 0 ? { $and: anyConditions } : {};
 
+  // Pagination setup
   const pages = parseInt(page as string) || 1;
   const size = parseInt(limit as string) || 10;
   const skip = (pages - 1) * size;
@@ -169,6 +175,53 @@ const deleteRequest = async (id: string) => {
   return result;
 };
 
+const getAllRequestsHistory = async (
+  userId: string,
+  query: Record<string, unknown>
+) => {
+  const { page, limit, searchTerm, ...filterData } = query;
+  const anyConditions: any[] = [];
+
+  anyConditions.push({ user: userId });
+
+  if (searchTerm) {
+    anyConditions.push({
+      $or: [{ question: { $regex: searchTerm, $options: 'i' } }],
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    const filterConditions = Object.entries(filterData).map(
+      ([field, value]) => ({ [field]: value })
+    );
+    anyConditions.push({ $and: filterConditions });
+  }
+
+  const whereConditions =
+    anyConditions.length > 0 ? { $and: anyConditions } : {};
+
+  // Pagination setup
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  const result = await Request.find(whereConditions)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+
+  const count = await Request.countDocuments(whereConditions);
+
+  return {
+    result,
+    meta: {
+      page: pages,
+      total: count,
+    },
+  };
+};
+
 export const RequestService = {
   createRequest,
   getAllRequests,
@@ -176,4 +229,5 @@ export const RequestService = {
   deleteRequest,
   getSingleRequest,
   reactRequest,
+  getAllRequestsHistory,
 };

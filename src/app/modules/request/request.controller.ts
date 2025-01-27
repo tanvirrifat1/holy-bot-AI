@@ -73,6 +73,17 @@ const deleteRequest = catchAsync(async (req, res) => {
   });
 });
 
+const getAllRequestsHistory = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const result = await RequestService.getAllRequestsHistory(userId, req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Questions retrieved successfully',
+    data: result,
+  });
+});
+
 export const RequestController = {
   createRequest,
   getAllRequests,
@@ -80,4 +91,5 @@ export const RequestController = {
   deleteRequest,
   getSingleRequest,
   reactRequest,
+  getAllRequestsHistory,
 };
