@@ -28,10 +28,12 @@ const createRequest = async (payload: IRequest) => {
   if (!room || payload.createRoom) {
     roomId = await generateRoomId();
 
+    console.log(roomId, 'roomId');
+
     room = await Room.create({
       user: payload.user,
       // questions: [payload._id],
-      roomName: payload.question.toString().slice(0, 20) + roomId,
+      roomName: payload.question.toString().slice(0, 50) + roomId,
     });
   }
 

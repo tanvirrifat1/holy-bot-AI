@@ -15,6 +15,7 @@ const questionSchema = new Schema<IRoom>(
     // ],
     roomName: {
       type: String,
+      required: true,
     },
   },
   {
