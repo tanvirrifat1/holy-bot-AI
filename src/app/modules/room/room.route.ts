@@ -9,6 +9,12 @@ const router = express.Router();
 router.get('/get-all-rooms', auth(USER_ROLES.USER), RoomController.getAllRooms);
 
 router.get(
+  '/get-recent-rooms',
+  auth(USER_ROLES.USER),
+  RoomController.getRecentRooms
+);
+
+router.get(
   '/get-all-ans/:id',
   auth(USER_ROLES.USER),
   RoomController.getQuestionAndAns

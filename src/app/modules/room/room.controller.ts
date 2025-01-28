@@ -6,7 +6,19 @@ import { RoomService } from './room.service';
 const getAllRooms = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
-  const result = await RoomService.getAllRooms(userId);
+  const result = await RoomService.getAllRooms(userId, req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Rooms retrieved successfully',
+    data: result,
+  });
+});
+
+const getRecentRooms = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+
+  const result = await RoomService.getRecentRooms(userId, req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -25,4 +37,8 @@ const getQuestionAndAns = catchAsync(async (req, res) => {
   });
 });
 
-export const RoomController = { getAllRooms, getQuestionAndAns };
+export const RoomController = {
+  getAllRooms,
+  getQuestionAndAns,
+  getRecentRooms,
+};
