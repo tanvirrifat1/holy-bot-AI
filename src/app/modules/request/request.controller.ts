@@ -20,9 +20,7 @@ const createRequest = catchAsync(async (req, res) => {
 });
 
 const getAllRequests = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-
-  const result = await RequestService.getAllRequests(userId, req.query);
+  const result = await RequestService.getAllRequests(req.params.id, req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -32,9 +30,7 @@ const getAllRequests = catchAsync(async (req, res) => {
 });
 
 const reactRequest = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-
-  const result = await RequestService.reactRequest(userId, req.query);
+  const result = await RequestService.reactRequest(req.params.id, req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

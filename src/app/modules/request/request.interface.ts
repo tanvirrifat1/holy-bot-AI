@@ -1,6 +1,10 @@
 import { Types } from 'mongoose';
 
 export type IRequest = {
-  question: string;
+  _id: string;
   user: Types.ObjectId;
+  question: string;
+  answer: string;
+  room: Types.ObjectId;
+  createRoom: boolean;
 };

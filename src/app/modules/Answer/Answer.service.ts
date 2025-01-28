@@ -31,8 +31,17 @@ const createAnswerToDB = async (
 };
 
 const getAllAnswers = async (questionId: string) => {
+  const isExistQuestion = await Request.findOne({ _id: questionId });
+
+  if (!isExistQuestion) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Question doesn't exist!");
+  }
+
   const testResult = await Answer.find({
     questionId: new Types.ObjectId(questionId),
+  }).populate({
+    path: 'questionId',
+    select: 'question',
   });
 
   return testResult;

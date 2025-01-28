@@ -7,10 +7,14 @@ const router = express.Router();
 
 router.post('/create', auth(USER_ROLES.USER), RequestController.createRequest);
 
-router.get('/get-all', auth(USER_ROLES.USER), RequestController.getAllRequests);
+router.get(
+  '/get-all/:id',
+  auth(USER_ROLES.USER),
+  RequestController.getAllRequests
+);
 
 router.get(
-  '/get-recent',
+  '/get-recent/:id',
   auth(USER_ROLES.USER),
   RequestController.reactRequest
 );

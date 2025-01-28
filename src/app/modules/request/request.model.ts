@@ -12,6 +12,19 @@ const questionSchema = new Schema<IRequest>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    answer: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    room: {
+      type: Schema.Types.ObjectId,
+      ref: 'Room',
+    },
+    createRoom: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
