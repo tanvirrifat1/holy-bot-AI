@@ -37,8 +37,19 @@ const getQuestionAndAns = catchAsync(async (req, res) => {
   });
 });
 
+const deleteRoom = catchAsync(async (req, res) => {
+  const result = await RoomService.deleteRoom(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Questions and Answers retrieved successfully',
+    data: result,
+  });
+});
+
 export const RoomController = {
   getAllRooms,
   getQuestionAndAns,
   getRecentRooms,
+  deleteRoom,
 };

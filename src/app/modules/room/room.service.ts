@@ -124,8 +124,20 @@ const getRecentRooms = async (
   };
 };
 
+const deleteRoom = async (roomId: string) => {
+  const isRoom = await Room.findByIdAndDelete(roomId);
+  if (!isRoom) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Room not found!');
+  }
+
+  await Request.deleteMany({ room: roomId });
+
+  return isRoom;
+};
+
 export const RoomService = {
   getAllRooms,
   getQuestionAndAns,
   getRecentRooms,
+  deleteRoom,
 };

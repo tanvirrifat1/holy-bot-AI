@@ -20,4 +20,6 @@ router.get(
   RoomController.getQuestionAndAns
 );
 
+router.delete('/delete/:id', auth(USER_ROLES.USER), RoomController.deleteRoom);
+
 export const RoomsRoutes = router;
