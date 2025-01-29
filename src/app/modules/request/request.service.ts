@@ -4,6 +4,7 @@ import { IRequest } from './request.interface';
 import { Request } from './request.model';
 import { Room } from '../room/room.model';
 import { generateRoomId } from './requestion.contant';
+import moment from 'moment';
 
 const createRequest = async (payload: IRequest) => {
   let roomId;
@@ -26,23 +27,16 @@ const createRequest = async (payload: IRequest) => {
   }
 
   if (!room || payload.createRoom) {
-    roomId = await generateRoomId();
-
-    console.log(roomId, 'roomId');
-
+    const formattedDate = moment().format('HH:mm:ss');
     room = await Room.create({
       user: payload.user,
       // questions: [payload._id],
-      roomName: payload.question.toString().slice(0, 50) + roomId,
+      // roomName: payload.question,
+      roomName: `${payload.question}-${formattedDate}`,
     });
   }
 
   const result = await Request.create({ ...payload, room: room._id });
-
-  // if (result) {
-  //   room.questions.push(result._id);
-  //   await room.save();
-  // }
 
   if (!result) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Request couldn't be created!");
