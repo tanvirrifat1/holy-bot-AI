@@ -33,7 +33,7 @@ router.get(
 
 router.get(
   '/get/:id',
-  auth(USER_ROLES.USER),
+  auth(USER_ROLES.USER, USER_ROLES.ADMIN),
   RequestController.getSingleRequest
 );
 
