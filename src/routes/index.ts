@@ -8,6 +8,7 @@ import { PackageRoutes } from '../app/modules/package/package.route';
 import { SubscriptionRoutes } from '../app/modules/subscriptation/subscriptation.route';
 import { DashboardRoutes } from '../app/modules/dashboard/dashboard.route';
 import { RoomsRoutes } from '../app/modules/room/room.route';
+import { NotificationRoutes } from '../app/modules/Notification/Notification.route';
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ const apiRoutes = [
   { path: '/subscription', route: SubscriptionRoutes },
   { path: '/dashboard', route: DashboardRoutes },
   { path: '/room', route: RoomsRoutes },
+  { path: '/notification', route: NotificationRoutes },
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));

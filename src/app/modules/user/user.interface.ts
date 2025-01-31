@@ -10,6 +10,8 @@ export type IUser = {
   verified: boolean;
   image: string;
   subscription?: boolean;
+  phone?: string;
+  address?: string;
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;

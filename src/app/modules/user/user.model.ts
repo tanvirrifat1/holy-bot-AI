@@ -32,6 +32,12 @@ const userSchema = new Schema<IUser, UserModal>(
     subscription: {
       type: Boolean,
     },
+    phone: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ['active', 'delete'],
