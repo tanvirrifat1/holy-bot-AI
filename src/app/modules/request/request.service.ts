@@ -5,6 +5,7 @@ import { Request } from './request.model';
 import { Room } from '../room/room.model';
 import { generateRoomId } from './requestion.contant';
 import moment from 'moment';
+import { User } from '../user/user.model';
 
 const createRequest = async (payload: IRequest) => {
   let roomId;
@@ -156,8 +157,18 @@ const reactRequest = async (roomId: string, query: Record<string, unknown>) => {
 };
 
 const getAllRequestsForAdmin = async (query: Record<string, unknown>) => {
-  const { page, limit, searchTerm, ...filterData } = query;
+  const { page, limit, searchTerm, email, ...filterData } = query;
   const anyConditions: any[] = [];
+
+  if (email) {
+    const emailIds = await User.find({
+      email: { $regex: email, $options: 'i' },
+    }).distinct('_id');
+
+    if (emailIds.length > 0) {
+      anyConditions.push({ user: { $in: emailIds } });
+    }
+  }
 
   if (searchTerm) {
     anyConditions.push({
