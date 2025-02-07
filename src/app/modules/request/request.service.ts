@@ -3,7 +3,6 @@ import ApiError from '../../../errors/ApiError';
 import { IRequest } from './request.interface';
 import { Request } from './request.model';
 import { Room } from '../room/room.model';
-import { generateRoomId } from './requestion.contant';
 import moment from 'moment';
 import { User } from '../user/user.model';
 
@@ -31,9 +30,12 @@ const createRequest = async (payload: IRequest) => {
     const formattedDate = moment().format('HH:mm:ss');
     room = await Room.create({
       user: payload.user,
-      // questions: [payload._id],
-      // roomName: payload.question,
-      roomName: `${payload.question}-${formattedDate}`,
+
+      roomName: `${
+        payload.path === '' ? payload.question : payload.fileQuestion
+      }-${formattedDate}`,
+
+      path: payload.path,
     });
   }
 

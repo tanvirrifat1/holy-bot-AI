@@ -25,6 +25,12 @@ const questionSchema = new Schema<IRequest>(
       type: Boolean,
       default: false,
     },
+    path: {
+      type: String,
+    },
+    fileQuestion: {
+      type: String,
+    },
   },
   {
     timestamps: true,

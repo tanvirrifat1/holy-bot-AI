@@ -7,4 +7,6 @@ export type IRequest = {
   answer: string;
   room: Types.ObjectId;
   createRoom: boolean;
+  path?: string;
+  fileQuestion?: string;
 };

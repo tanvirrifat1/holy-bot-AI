@@ -113,10 +113,6 @@ const getRecentRooms = async (
     .limit(size)
     .lean();
 
-  // if (!result || result.length === 0) {
-  //   return null; // Return null if no data is found
-  // }
-
   const count = await Room.countDocuments(whereConditions);
 
   return {

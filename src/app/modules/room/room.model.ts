@@ -7,15 +7,12 @@ const questionSchema = new Schema<IRoom>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    // questions: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Question',
-    //   },
-    // ],
     roomName: {
       type: String,
       required: true,
+    },
+    path: {
+      type: String,
     },
   },
   {
