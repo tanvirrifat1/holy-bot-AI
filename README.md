@@ -126,4 +126,4 @@ Special thanks to the **Node.js** and **TypeScript** communities for their conti
 
 ## Contact
 
-For any questions or suggestions, please open an issue on the [GitHub repository](https://github.com/your-username/chat-bot-ai) or contact the maintainer directly.
+For any questions or suggestions, please open an issue on the [GitHub repository](https://github.com/tanvirrifat1/holy-bot-AI/tree/main/src/app/modules) or contact the maintainer directly.
