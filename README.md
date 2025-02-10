@@ -123,7 +123,3 @@ This project is licensed under the **ISC License**. See the `LICENSE` file for d
 
 Thanks to all the open-source contributors whose libraries are used in this project.
 Special thanks to the **Node.js** and **TypeScript** communities for their continuous support and contributions.
-
-## Contact
-
-For any questions or suggestions, please open an issue on the [GitHub repository](https://github.com/tanvirrifat1/holy-bot-AI/tree/main/src/app/modules) or contact the maintainer directly.
