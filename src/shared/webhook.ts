@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { User } from '../app/modules/user/user.model';
 import { Subscriptation } from '../app/modules/subscriptation/subscriptation.model';
 import { sendNotifications } from '../helpers/notificationHelper';
+import ApiError from '../errors/ApiError';
 
 // const handleCheckoutSessionCompleted = async (
 //   session: Stripe.Checkout.Session
@@ -44,12 +45,15 @@ import { sendNotifications } from '../helpers/notificationHelper';
 //   await paymentRecord.save();
 // };
 
-// Function to handle invoice.payment_succeeded event
-
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {
   const { amount_total, metadata, payment_intent, payment_status } = session;
+
+  if (payment_intent !== 'paid') {
+    throw new ApiError(400, 'Payment not completed');
+  }
+
   const userId = metadata?.userId as string;
   const packageId = metadata?.packageId as string;
   const products = JSON.parse(metadata?.products || '[]');
