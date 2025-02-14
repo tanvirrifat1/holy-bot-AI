@@ -5,6 +5,47 @@ import { User } from '../app/modules/user/user.model';
 import { Subscriptation } from '../app/modules/subscriptation/subscriptation.model';
 import { sendNotifications } from '../helpers/notificationHelper';
 
+// const handleCheckoutSessionCompleted = async (
+//   session: Stripe.Checkout.Session
+// ) => {
+//   const { amount_total, metadata, payment_intent, payment_status } = session;
+//   const userId = metadata?.userId as string;
+//   const packageId = metadata?.packageId as string;
+//   const products = JSON.parse(metadata?.products || '[]');
+//   const email = session.customer_email || '';
+//   const amountTotal = (amount_total ?? 0) / 100;
+
+//   const subscription = await stripe.subscriptions.retrieve(
+//     session.subscription as string
+//   );
+
+//   const startDate = new Date(subscription.start_date * 1000);
+//   const endDate = new Date(subscription.current_period_end * 1000);
+
+//   const interval = subscription.items.data[0]?.plan?.interval as string;
+
+//   const status = payment_status === 'paid' ? 'Completed' : 'Pending';
+
+//   const paymentRecord = new Subscriptation({
+//     amount: amountTotal,
+//     user: new Types.ObjectId(userId),
+//     package: new Types.ObjectId(packageId),
+//     products,
+//     email,
+//     transactionId: payment_intent,
+//     startDate,
+//     endDate,
+//     status,
+//     subscriptionId: session.subscription,
+//     stripeCustomerId: session.customer as string,
+//     time: interval,
+//   });
+
+//   await paymentRecord.save();
+// };
+
+// Function to handle invoice.payment_succeeded event
+
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {
@@ -15,36 +56,45 @@ const handleCheckoutSessionCompleted = async (
   const email = session.customer_email || '';
   const amountTotal = (amount_total ?? 0) / 100;
 
-  const subscription = await stripe.subscriptions.retrieve(
-    session.subscription as string
-  );
+  const subscriptionId = session.subscription as string;
 
-  const startDate = new Date(subscription.start_date * 1000);
-  const endDate = new Date(subscription.current_period_end * 1000);
+  // Check if a subscription already exists
+  let subscription = await Subscriptation.findOne({ subscriptionId });
 
-  const interval = subscription.items.data[0]?.plan?.interval as string;
+  if (!subscription) {
+    // Retrieve subscription details from Stripe
+    const stripeSubscription = await stripe.subscriptions.retrieve(
+      subscriptionId
+    );
+    const startDate = new Date(stripeSubscription.start_date * 1000);
+    const endDate = new Date(stripeSubscription.current_period_end * 1000);
+    const interval = stripeSubscription.items.data[0]?.plan?.interval as string;
+    const status = payment_status === 'paid' ? 'Completed' : 'Pending';
 
-  const status = payment_status === 'paid' ? 'Completed' : 'Pending';
+    // Create a new subscription record
+    subscription = new Subscriptation({
+      amount: amountTotal,
+      user: new Types.ObjectId(userId),
+      package: new Types.ObjectId(packageId),
+      products,
+      email,
+      transactionId: payment_intent,
+      startDate,
+      endDate,
+      status,
+      subscriptionId,
+      stripeCustomerId: session.customer as string,
+      time: interval,
+    });
 
-  // const paymentRecord = new Subscriptation({
-  //   amount: amountTotal,
-  //   user: new Types.ObjectId(userId),
-  //   package: new Types.ObjectId(packageId),
-  //   products,
-  //   email,
-  //   transactionId: payment_intent,
-  //   startDate,
-  //   endDate,
-  //   status,
-  //   subscriptionId: session.subscription,
-  //   stripeCustomerId: session.customer as string,
-  //   time: interval,
-  // });
-
-  // await paymentRecord.save();
+    await subscription.save();
+  } else {
+    // Update existing subscription status if already exists
+    subscription.status = payment_status === 'paid' ? 'Completed' : 'Pending';
+    await subscription.save();
+  }
 };
 
-// Function to handle invoice.payment_succeeded event
 const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
   const subscription = await Subscriptation.findOne({
     subscriptionId: invoice.subscription,
