@@ -116,6 +116,12 @@ const updatePackage = async (
     if (updates.unitAmount || updates.interval) {
       const stripeInterval = mapInterval(updates.interval || plan.interval);
 
+      if (plan.priceId) {
+        await stripe.prices.update(plan.priceId, {
+          active: false, // Archive the old price
+        });
+      }
+
       const newPrice = await stripe.prices.create({
         unit_amount: updates.unitAmount
           ? updates.unitAmount * 100

@@ -59,7 +59,7 @@ const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
   await User.findByIdAndUpdate(user?._id, {
     $set: { subscription: true },
   });
-  console.log(subscription);
+
   if (user) {
     const result = await User.findById(user._id);
     const data = {

@@ -6,7 +6,6 @@ import { User } from '../user/user.model';
 import Stripe from 'stripe';
 import { WebhookService } from '../../../shared/webhook';
 import { Subscriptation } from './subscriptation.model';
-import { ISubscription } from './subscriptation.interface';
 
 const createCheckoutSessionService = async (
   userId: string,
