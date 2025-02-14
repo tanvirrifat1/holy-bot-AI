@@ -5,11 +5,17 @@ import { User } from '../app/modules/user/user.model';
 import { Subscriptation } from '../app/modules/subscriptation/subscriptation.model';
 import { sendNotifications } from '../helpers/notificationHelper';
 import ApiError from '../errors/ApiError';
+import { StatusCodes } from 'http-status-codes';
 
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {
   const { amount_total, metadata, payment_intent, payment_status } = session;
+
+  if (payment_status !== 'paid') {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Payment failed');
+  }
+
   const userId = metadata?.userId as string;
   const packageId = metadata?.packageId as string;
   const products = JSON.parse(metadata?.products || '[]');
