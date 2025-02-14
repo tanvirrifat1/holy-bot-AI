@@ -50,10 +50,10 @@ const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
     subscriptionId: invoice.subscription,
   });
 
-  if (subscription) {
-    subscription.status = 'active';
-    await subscription.save();
-  }
+  // if (subscription) {
+  //   subscription.status = 'active';
+  //   await subscription.save();
+  // }
 
   const user = await User.findById(subscription?.user);
   await User.findByIdAndUpdate(user?._id, {

@@ -6,7 +6,7 @@ import { User } from '../user/user.model';
 const totalStatistics = async () => {
   const [totalEarnings, totalUsers, totalSubscriptation] = await Promise.all([
     Subscriptation.aggregate([
-      { $match: { status: 'active' } },
+      { $match: { status: 'Completed' } },
       {
         $group: {
           _id: null,
