@@ -26,22 +26,22 @@ const handleCheckoutSessionCompleted = async (
 
   const status = payment_status === 'paid' ? 'Completed' : 'Pending';
 
-  const paymentRecord = new Subscriptation({
-    amount: amountTotal,
-    user: new Types.ObjectId(userId),
-    package: new Types.ObjectId(packageId),
-    products,
-    email,
-    transactionId: payment_intent,
-    startDate,
-    endDate,
-    status,
-    subscriptionId: session.subscription,
-    stripeCustomerId: session.customer as string,
-    time: interval,
-  });
+  // const paymentRecord = new Subscriptation({
+  //   amount: amountTotal,
+  //   user: new Types.ObjectId(userId),
+  //   package: new Types.ObjectId(packageId),
+  //   products,
+  //   email,
+  //   transactionId: payment_intent,
+  //   startDate,
+  //   endDate,
+  //   status,
+  //   subscriptionId: session.subscription,
+  //   stripeCustomerId: session.customer as string,
+  //   time: interval,
+  // });
 
-  await paymentRecord.save();
+  // await paymentRecord.save();
 };
 
 // Function to handle invoice.payment_succeeded event
@@ -50,10 +50,10 @@ const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
     subscriptionId: invoice.subscription,
   });
 
-  // if (subscription) {
-  //   subscription.status = 'active';
-  //   await subscription.save();
-  // }
+  if (subscription) {
+    subscription.status = 'Completed'; // Update status to completed
+    await subscription.save();
+  }
 
   const user = await User.findById(subscription?.user);
   await User.findByIdAndUpdate(user?._id, {
