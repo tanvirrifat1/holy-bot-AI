@@ -14,7 +14,7 @@ app.use(Morgan.errorHandler);
 //body parser
 app.use(
   cors({
-    origin: ['*'],
+    origin: '*', // allow to server to accept request from different origin
     credentials: true,
   })
 );
