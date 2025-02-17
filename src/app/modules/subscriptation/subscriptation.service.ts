@@ -129,7 +129,7 @@ const cancelSubscriptation = async (userId: string) => {
 const getAllSubs = async (query: Record<string, unknown>) => {
   const { page, limit } = query;
 
-  const anyConditions: any[] = [{ status: 'active' }];
+  const anyConditions: any[] = [{ status: 'Completed' }];
 
   const whereConditions =
     anyConditions.length > 0 ? { $and: anyConditions } : {};
