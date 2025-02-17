@@ -19,7 +19,7 @@ const totalStatistics = async () => {
     User.countDocuments({ role: USER_ROLES.USER, status: 'active' }),
 
     // Total active products
-    Subscriptation.countDocuments({ status: 'active' }),
+    Subscriptation.countDocuments({ status: 'Completed' }),
   ]);
 
   return {
@@ -30,7 +30,7 @@ const totalStatistics = async () => {
 };
 
 const getEarningChartData = async () => {
-  const matchConditions: any = { status: 'active' };
+  const matchConditions: any = { status: 'Completed' };
 
   const result = await Subscriptation.aggregate([
     { $match: matchConditions },
