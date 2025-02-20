@@ -81,7 +81,6 @@ const handleCheckoutSessionCompleted = async (
   });
 
   if (existingSubscription) {
-    // Update existing subscription data
     existingSubscription.amount = amountTotal;
     existingSubscription.package = new Types.ObjectId(packageId);
     existingSubscription.products = products;
@@ -96,7 +95,6 @@ const handleCheckoutSessionCompleted = async (
 
     await existingSubscription.save();
   } else {
-    // First-time subscription, create a new record
     const paymentRecord = new Subscriptation({
       amount: amountTotal,
       user: new Types.ObjectId(userId),
