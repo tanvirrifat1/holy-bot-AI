@@ -72,8 +72,9 @@ const createCheckoutSessionService = async (
         },
       ],
       mode: 'subscription',
-      success_url: process.env.SUCCESS_URL || 'https://default-success-url.com',
-      cancel_url: process.env.CANCEL_URL || 'https://default-cancel-url.com',
+      success_url:
+        process.env.SUCCESS_URL || 'https://holybot.ai/paymentsuccess',
+      cancel_url: process.env.CANCEL_URL || 'https://holybot.ai/paymentFail',
       metadata: {
         userId,
         packageId,
