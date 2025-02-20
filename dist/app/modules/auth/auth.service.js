@@ -75,6 +75,7 @@ const forgetPasswordToDB = (email) => __awaiter(void 0, void 0, void 0, function
 const verifyEmailToDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { email, oneTimeCode } = payload;
+    console.log(email, oneTimeCode);
     const isExistUser = yield user_model_1.User.findOne({ email }).select('+authentication');
     if (!isExistUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "User doesn't exist!");

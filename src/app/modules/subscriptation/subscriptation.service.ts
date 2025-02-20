@@ -7,13 +7,56 @@ import Stripe from 'stripe';
 import { WebhookService } from '../../../shared/webhook';
 import { Subscriptation } from './subscriptation.model';
 
+// const createCheckoutSessionService = async (
+//   userId: string,
+//   packageId: string
+// ) => {
+//   const isUser = await User.findById(userId);
+
+//   try {
+//     const plan = await Package.findById(packageId);
+//     if (!plan) {
+//       throw new ApiError(StatusCodes.NOT_FOUND, 'Package not found');
+//     }
+
+//     // Create a checkout session for a subscription
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       line_items: [
+//         {
+//           price: plan.priceId,
+//           quantity: 1,
+//         },
+//       ],
+//       mode: 'subscription',
+//       success_url: process.env.SUCCESS_URL,
+//       cancel_url: process.env.SUCCESS_URL,
+//       metadata: {
+//         userId,
+//         packageId,
+//       },
+//       customer_email: isUser?.email,
+//     });
+
+//     // Return the checkout session URL
+//     return session.url;
+//   } catch (error) {
+//     throw new Error('Failed to create checkout session');
+//   }
+// };
+
 const createCheckoutSessionService = async (
   userId: string,
   packageId: string
 ) => {
-  const isUser = await User.findById(userId);
-
   try {
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+    }
+
+    // Check if package exists
     const plan = await Package.findById(packageId);
     if (!plan) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Package not found');
@@ -29,19 +72,27 @@ const createCheckoutSessionService = async (
         },
       ],
       mode: 'subscription',
-      success_url: process.env.SUCCESS_URL,
-      cancel_url: process.env.SUCCESS_URL,
+      success_url: process.env.SUCCESS_URL || 'https://default-success-url.com',
+      cancel_url: process.env.CANCEL_URL || 'https://default-cancel-url.com',
       metadata: {
         userId,
         packageId,
       },
-      customer_email: isUser?.email,
+      customer_email: user.email,
     });
 
-    // Return the checkout session URL
     return session.url;
-  } catch (error) {
-    throw new Error('Failed to create checkout session');
+  } catch (error: any) {
+    console.error('Error creating checkout session:', error);
+
+    if (error instanceof ApiError) {
+      throw error; // Re-throw custom errors
+    }
+
+    throw new ApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error?.message || 'Failed to create checkout session'
+    );
   }
 };
 

@@ -37,8 +37,8 @@ const createCheckoutSessionService = (userId, packageId) => __awaiter(void 0, vo
                 },
             ],
             mode: 'subscription',
-            success_url: 'https://yourapp.com/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url: 'https://yourapp.com/cancel',
+            success_url: process.env.SUCCESS_URL,
+            cancel_url: process.env.SUCCESS_URL,
             metadata: {
                 userId,
                 packageId,
