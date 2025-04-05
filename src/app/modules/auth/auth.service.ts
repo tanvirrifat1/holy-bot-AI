@@ -53,14 +53,14 @@ const loginUserFromDB = async (payload: ILoginData) => {
   const accessToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
     config.jwt.jwt_secret as Secret,
-    '15d'
+    config.jwt.jwt_expire_in as string
   );
 
   //create token
   const refreshToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
-    config.jwt.jwtRefreshSecret as Secret,
-    '30d'
+    config.jwt.jwt_secret as Secret,
+    config.jwt.jwt_expire_in as string
   );
 
   return { accessToken, refreshToken };

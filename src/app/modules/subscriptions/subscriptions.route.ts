@@ -20,7 +20,7 @@ router.get(
 router.get(
   '/get-all',
   auth(USER_ROLES.USER, USER_ROLES.ADMIN),
-  SubscriptionController.getAllSubscriptation
+  SubscriptionController.getAllSubscriptions
 );
 
 router.patch(
@@ -32,7 +32,7 @@ router.patch(
 router.delete(
   '/cancel',
   auth(USER_ROLES.USER),
-  SubscriptionController.cancelSubscriptation
+  SubscriptionController.cancelSubscriptions
 );
 
 export const SubscriptionRoutes = router;
