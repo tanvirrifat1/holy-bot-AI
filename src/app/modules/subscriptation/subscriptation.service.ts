@@ -7,44 +7,6 @@ import Stripe from 'stripe';
 import { WebhookService } from '../../../shared/webhook';
 import { Subscriptation } from './subscriptation.model';
 
-// const createCheckoutSessionService = async (
-//   userId: string,
-//   packageId: string
-// ) => {
-//   const isUser = await User.findById(userId);
-
-//   try {
-//     const plan = await Package.findById(packageId);
-//     if (!plan) {
-//       throw new ApiError(StatusCodes.NOT_FOUND, 'Package not found');
-//     }
-
-//     // Create a checkout session for a subscription
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ['card'],
-//       line_items: [
-//         {
-//           price: plan.priceId,
-//           quantity: 1,
-//         },
-//       ],
-//       mode: 'subscription',
-//       success_url: process.env.SUCCESS_URL,
-//       cancel_url: process.env.SUCCESS_URL,
-//       metadata: {
-//         userId,
-//         packageId,
-//       },
-//       customer_email: isUser?.email,
-//     });
-
-//     // Return the checkout session URL
-//     return session.url;
-//   } catch (error) {
-//     throw new Error('Failed to create checkout session');
-//   }
-// };
-
 const createCheckoutSessionService = async (
   userId: string,
   packageId: string
@@ -83,11 +45,9 @@ const createCheckoutSessionService = async (
     });
 
     return session.url;
-  } catch (error: any) {
-    console.error('Error creating checkout session:', error);
-
+  } catch (error: Error | any) {
     if (error instanceof ApiError) {
-      throw error; // Re-throw custom errors
+      throw error;
     }
 
     throw new ApiError(
@@ -141,7 +101,7 @@ const getSubscribtionService = async (userId: string) => {
     });
 
   if (!subscription) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscribtion not found');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscriptions not found');
   }
   return subscription;
 };
@@ -155,7 +115,7 @@ const cancelSubscriptation = async (userId: string) => {
 
   const subscription = await Subscriptation.findOne({ user: userId });
   if (!subscription) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscribtion not found');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscriptions not found');
   }
 
   const updatedSubscription = await stripe.subscriptions.update(
@@ -166,7 +126,7 @@ const cancelSubscriptation = async (userId: string) => {
   );
 
   if (!updatedSubscription) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscribtion not cancel');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscriptions not cancel');
   }
 
   const updatedSub = await Subscriptation.findOneAndUpdate(
@@ -251,10 +211,10 @@ const updateSubscriptionPlanService = async (
       items: [
         {
           id: stripeSubscription.items.data[0].id,
-          price: newPlan.priceId, // The new plan's price ID
+          price: newPlan.priceId,
         },
       ],
-      proration_behavior: 'create_prorations', // Optional: set based on your requirements
+      proration_behavior: 'create_prorations',
     }
   );
 
@@ -265,7 +225,6 @@ const updateSubscriptionPlanService = async (
     );
   }
 
-  // // Step 6: Retrieve the upcoming invoice to calculate proration
   const invoicePreview = await stripe.invoices.retrieveUpcoming({
     customer: updatedStripeSubscription.customer as string,
     subscription: updatedStripeSubscription.id,

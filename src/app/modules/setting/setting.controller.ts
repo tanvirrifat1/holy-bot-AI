@@ -1,12 +1,15 @@
+import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
 import { SettingService } from './setting.service';
 
 // Terms and condition
 const createTermsAndCondition = catchAsync(async (req, res) => {
   const result = await SettingService.createTermsAndCondition(req.body);
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     message: 'Terms-and-condition updated successfully',
     data: result,
   });
@@ -14,10 +17,11 @@ const createTermsAndCondition = catchAsync(async (req, res) => {
 
 const getTermsAndCondition = catchAsync(async (req, res) => {
   const result = await SettingService.getTermsAndCondition();
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
-    message: 'Terms-and-condition retrived successfully',
+    statusCode: StatusCodes.OK,
+    message: 'Terms-and-condition retrieved successfully',
     data: result,
   });
 });
@@ -25,9 +29,10 @@ const getTermsAndCondition = catchAsync(async (req, res) => {
 // privacy and policy
 const createPrivacyPolicy = catchAsync(async (req, res) => {
   const result = await SettingService.createPrivacyPolicy(req.body);
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     message: 'Privacy-policy updated successfully',
     data: result,
   });
@@ -35,10 +40,11 @@ const createPrivacyPolicy = catchAsync(async (req, res) => {
 
 const getPrivacyPolicy = catchAsync(async (req, res) => {
   const result = await SettingService.getPrivacyPolicy();
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
-    message: 'Privacy-policy retrived successfully',
+    statusCode: StatusCodes.OK,
+    message: 'Privacy-policy retrieved successfully',
     data: result,
   });
 });
@@ -46,9 +52,10 @@ const getPrivacyPolicy = catchAsync(async (req, res) => {
 // privacy and policy
 const createTrustAndSafety = catchAsync(async (req, res) => {
   const result = await SettingService.createTrustAndSafety(req.body);
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
+    statusCode: StatusCodes.OK,
     message: 'Trust-and-safety updated successfully',
     data: result,
   });
@@ -56,10 +63,11 @@ const createTrustAndSafety = catchAsync(async (req, res) => {
 
 const getTrustAndSafety = catchAsync(async (req, res) => {
   const result = await SettingService.getTrustAndSafety();
-  res.status(200).json({
+
+  sendResponse(res, {
     success: true,
-    statusCode: 200,
-    message: 'Trust-and-safety retrived successfully',
+    statusCode: StatusCodes.OK,
+    message: 'Trust-and-safety retrieved successfully',
     data: result,
   });
 });

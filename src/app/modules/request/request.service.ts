@@ -88,7 +88,6 @@ const getAllRequests = async (
       path: 'room',
       select: 'roomName',
     })
-    // .sort({ createdAt: -1 })
     .skip(skip)
     .limit(size)
     .lean();

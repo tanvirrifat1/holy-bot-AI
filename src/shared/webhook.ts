@@ -7,50 +7,6 @@ import { sendNotifications } from '../helpers/notificationHelper';
 import ApiError from '../errors/ApiError';
 import { StatusCodes } from 'http-status-codes';
 
-// const handleCheckoutSessionCompleted = async (
-//   session: Stripe.Checkout.Session
-// ) => {
-//   const { amount_total, metadata, payment_intent, payment_status } = session;
-
-//   if (payment_status !== 'paid') {
-//     throw new ApiError(StatusCodes.BAD_REQUEST, 'Payment failed');
-//   }
-
-//   const userId = metadata?.userId as string;
-//   const packageId = metadata?.packageId as string;
-//   const products = JSON.parse(metadata?.products || '[]');
-//   const email = session.customer_email || '';
-//   const amountTotal = (amount_total ?? 0) / 100;
-
-//   const subscription = await stripe.subscriptions.retrieve(
-//     session.subscription as string
-//   );
-
-//   const startDate = new Date(subscription.start_date * 1000);
-//   const endDate = new Date(subscription.current_period_end * 1000);
-
-//   const interval = subscription.items.data[0]?.plan?.interval as string;
-
-//   const status = payment_status === 'paid' ? 'Completed' : 'Pending';
-
-//   const paymentRecord = new Subscriptation({
-//     amount: amountTotal,
-//     user: new Types.ObjectId(userId),
-//     package: new Types.ObjectId(packageId),
-//     products,
-//     email,
-//     transactionId: payment_intent,
-//     startDate,
-//     endDate,
-//     status,
-//     subscriptionId: session.subscription,
-//     stripeCustomerId: session.customer as string,
-//     time: interval,
-//   });
-
-//   await paymentRecord.save();
-// };
-
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {

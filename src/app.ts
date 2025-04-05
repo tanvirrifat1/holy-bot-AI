@@ -14,7 +14,7 @@ app.use(Morgan.errorHandler);
 //body parser
 app.use(
   cors({
-    origin: '*', // allow to server to accept request from different origin
+    origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
     credentials: true,
   })
 );

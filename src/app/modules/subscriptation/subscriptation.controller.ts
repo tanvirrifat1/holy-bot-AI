@@ -5,6 +5,7 @@ import config from '../../../config';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
+import ApiError from '../../../errors/ApiError';
 
 const createCheckoutSessionController = async (req: Request, res: Response) => {
   const userId = req.user.id;
@@ -34,8 +35,10 @@ const stripeWebhookController = async (req: Request, res: Response) => {
 
     res.status(200).send({ received: true });
   } catch (err) {
-    console.error('Error in Stripe webhook');
-    res.status(400).send(`Webhook Error:`);
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      `Webhook Error: ${(err as Error).message}`
+    );
   }
 };
 
@@ -46,7 +49,7 @@ const getAllSubscriptation = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Subscriptation retrived successfully',
+    message: 'Subscriptions retrieved successfully',
     data: result,
   });
 });
@@ -59,7 +62,7 @@ const cancelSubscriptation = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Subscriptation canceled successfully',
+    message: 'Subscriptions canceled successfully',
     data: result,
   });
 });
@@ -69,7 +72,7 @@ const getAllSubs = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Subscriptation retrived successfully',
+    message: 'Subscriptions retrieved successfully',
     data: result,
   });
 });
@@ -86,7 +89,7 @@ const updateSubs = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Subscriptation updated successfully',
+    message: 'Subscriptions updated successfully',
     data: result,
   });
 });
