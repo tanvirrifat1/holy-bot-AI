@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { stripe } from '../../../shared/stripe';
-import { SubscriptationService } from './subscriptation.service';
+import { subscriptionsService } from './subscriptions.service';
 import config from '../../../config';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
@@ -11,7 +11,7 @@ const createCheckoutSessionController = async (req: Request, res: Response) => {
   const userId = req.user.id;
   const { packageId } = req.body;
   try {
-    const sessionUrl = await SubscriptationService.createCheckoutSessionService(
+    const sessionUrl = await subscriptionsService.createCheckoutSessionService(
       userId,
       packageId
     );
@@ -31,7 +31,7 @@ const stripeWebhookController = async (req: Request, res: Response) => {
       config.webhook_secret as string
     );
 
-    await SubscriptationService.handleStripeWebhookService(event);
+    await subscriptionsService.handleStripeWebhookService(event);
 
     res.status(200).send({ received: true });
   } catch (err) {
@@ -42,10 +42,10 @@ const stripeWebhookController = async (req: Request, res: Response) => {
   }
 };
 
-const getAllSubscriptation = catchAsync(async (req: Request, res: Response) => {
+const getAllSubscriptions = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.id;
 
-  const result = await SubscriptationService.getSubscribtionService(userId);
+  const result = await subscriptionsService.getSubscribtionService(userId);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -54,10 +54,10 @@ const getAllSubscriptation = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const cancelSubscriptation = catchAsync(async (req: Request, res: Response) => {
+const cancelSubscriptions = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.id;
 
-  const result = await SubscriptationService.cancelSubscriptation(userId);
+  const result = await subscriptionsService.cancelSubscriptation(userId);
 
   sendResponse(res, {
     success: true,
@@ -68,7 +68,7 @@ const cancelSubscriptation = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllSubs = catchAsync(async (req: Request, res: Response) => {
-  const result = await SubscriptationService.getAllSubs(req.query);
+  const result = await subscriptionsService.getAllSubs(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -82,7 +82,7 @@ const updateSubs = catchAsync(async (req: Request, res: Response) => {
 
   const { newPackageId } = req.body;
 
-  const result = await SubscriptationService.updateSubscriptionPlanService(
+  const result = await subscriptionsService.updateSubscriptionPlanService(
     userId,
     newPackageId
   );
@@ -97,8 +97,8 @@ const updateSubs = catchAsync(async (req: Request, res: Response) => {
 export const SubscriptionController = {
   createCheckoutSessionController,
   stripeWebhookController,
-  getAllSubscriptation,
-  cancelSubscriptation,
+  getAllSubscriptions,
+  cancelSubscriptions,
   getAllSubs,
   updateSubs,
 };

@@ -5,7 +5,7 @@ import { Package } from '../package/package.model';
 import { User } from '../user/user.model';
 import Stripe from 'stripe';
 import { WebhookService } from '../../../shared/webhook';
-import { Subscriptation } from './subscriptation.model';
+import { Subscriptation } from './subscriptions.model';
 
 const createCheckoutSessionService = async (
   userId: string,
@@ -253,7 +253,7 @@ const updateSubscriptionPlanService = async (
   return updatedSub;
 };
 
-export const SubscriptationService = {
+export const subscriptionsService = {
   createCheckoutSessionService,
   handleStripeWebhookService,
   getSubscribtionService,

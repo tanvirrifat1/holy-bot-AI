@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { stripe } from './stripe';
 import { Types } from 'mongoose';
 import { User } from '../app/modules/user/user.model';
-import { Subscriptation } from '../app/modules/subscriptation/subscriptation.model';
+import { Subscriptation } from '../app/modules/subscriptions/subscriptions.model';
 import { sendNotifications } from '../helpers/notificationHelper';
 import ApiError from '../errors/ApiError';
 import { StatusCodes } from 'http-status-codes';

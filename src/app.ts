@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './routes';
 import { Morgan } from './shared/morgen';
-import { SubscriptionController } from './app/modules/subscriptation/subscriptation.controller';
+import { SubscriptionController } from './app/modules/subscriptions/subscriptions.controller';
 const app = express();
 
 //morgan

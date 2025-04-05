@@ -1,6 +1,6 @@
 import { USER_ROLES } from '../../../enums/user';
 import { months } from '../../../helpers/month';
-import { Subscriptation } from '../subscriptation/subscriptation.model';
+import { Subscriptation } from '../subscriptions/subscriptions.model';
 import { User } from '../user/user.model';
 
 const totalStatistics = async () => {

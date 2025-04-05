@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { ISubscription } from './subscriptation.interface';
+import { ISubscription } from './subscriptions.interface';
 
 const subscribtionSchema = new Schema<ISubscription>({
   user: {
