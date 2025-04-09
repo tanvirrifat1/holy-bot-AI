@@ -31,7 +31,7 @@ const createPackage = (payload) => __awaiter(void 0, void 0, void 0, function* (
             throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'package already exist');
         }
         const descriptionString = Array.isArray(payload.description)
-            ? payload.description.join(' ') // Join elements with a space
+            ? payload.description.join(' ')
             : payload.description;
         // Create Stripe product
         const product = yield stripe_1.stripe.products.create({
@@ -91,8 +91,8 @@ const updatePackage = (planId, updates) => __awaiter(void 0, void 0, void 0, fun
         }
         // Ensure description is always a string for Stripe
         const updatedDescription = Array.isArray(updates.description)
-            ? updates.description.join(' ') // Join array elements if description is an array
-            : updates.description; // Use as-is if it's already a string
+            ? updates.description.join(' ')
+            : updates.description;
         if (updates.name || updatedDescription) {
             yield stripe_1.stripe.products.update(plan.productId, {
                 name: updates.name || plan.name,
@@ -122,13 +122,12 @@ const updatePackage = (planId, updates) => __awaiter(void 0, void 0, void 0, fun
             runValidators: true,
         });
         if (!updatedPlan) {
-            throw new Error('Failed to update Package');
+            throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Failed to update Package');
         }
         return updatedPlan.toObject();
     }
     catch (error) {
-        console.error('Error updating plan:', error);
-        throw new Error('Failed to update plan');
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to update Package');
     }
 });
 const deletePackage = (planId) => __awaiter(void 0, void 0, void 0, function* () {

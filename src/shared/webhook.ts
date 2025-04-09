@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { stripe } from './stripe';
 import { Types } from 'mongoose';
 import { User } from '../app/modules/user/user.model';
-import { Subscriptation } from '../app/modules/subscriptions/subscriptions.model';
+import { Subscription } from '../app/modules/subscriptions/subscriptions.model';
 import { sendNotifications } from '../helpers/notificationHelper';
 import ApiError from '../errors/ApiError';
 import { StatusCodes } from 'http-status-codes';
@@ -31,8 +31,7 @@ const handleCheckoutSessionCompleted = async (
   const interval = subscription.items.data[0]?.plan?.interval as string;
   const status = payment_status === 'paid' ? 'Completed' : 'Pending';
 
-  // Check if the user already has a subscription
-  const existingSubscription: any = await Subscriptation.findOne({
+  const existingSubscription: any = await Subscription.findOne({
     user: userId,
   });
 
@@ -51,7 +50,7 @@ const handleCheckoutSessionCompleted = async (
 
     await existingSubscription.save();
   } else {
-    const paymentRecord = new Subscriptation({
+    const paymentRecord = new Subscription({
       amount: amountTotal,
       user: new Types.ObjectId(userId),
       package: new Types.ObjectId(packageId),
@@ -71,12 +70,12 @@ const handleCheckoutSessionCompleted = async (
 };
 
 const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
-  const subscription = await Subscriptation.findOne({
+  const subscription = await Subscription.findOne({
     subscriptionId: invoice.subscription,
   });
 
   if (subscription) {
-    subscription.status = 'Completed'; // Update status to completed
+    subscription.status = 'Completed';
     await subscription.save();
   }
 
@@ -96,28 +95,26 @@ const handleInvoicePaymentSucceeded = async (invoice: Stripe.Invoice) => {
   }
 };
 
-// Function to handle invoice.payment_failed event
 const handleInvoicePaymentFailed = async (invoice: Stripe.Invoice) => {
-  const subscription = await Subscriptation.findOne({
+  const subscription = await Subscription.findOne({
     subscriptionId: invoice.subscription,
   });
 
   if (subscription) {
-    subscription.status = 'expired'; // Update status to expired
+    subscription.status = 'expired';
     await subscription.save();
   }
 
   const user = await User.findById(subscription?.user);
   if (user) {
     await User.findByIdAndUpdate(user._id, {
-      $set: { subscription: false }, // Update user subscription status
+      $set: { subscription: false },
     });
   }
 };
 
-// Function to handle checkout.session.async_payment_failed event
 const handleAsyncPaymentFailed = async (session: Stripe.Checkout.Session) => {
-  const payment = await Subscriptation.findOne({
+  const payment = await Subscription.findOne({
     stripeCustomerId: session.customer as string,
   });
   if (payment) {
@@ -126,14 +123,13 @@ const handleAsyncPaymentFailed = async (session: Stripe.Checkout.Session) => {
   }
 };
 
-// Function to handle customer.subscription.deleted event
 const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
-  const existingSubscription = await Subscriptation.findOne({
+  const existingSubscription = await Subscription.findOne({
     subscriptionId: subscription.id,
   });
 
   if (existingSubscription) {
-    existingSubscription.status = 'expired'; // Mark as expired
+    existingSubscription.status = 'expired';
     await existingSubscription.save();
 
     const user = await User.findById(existingSubscription.user);

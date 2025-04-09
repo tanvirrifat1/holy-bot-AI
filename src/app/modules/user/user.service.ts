@@ -151,10 +151,6 @@ const updateProfileToDB = async (
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  if (!isExistUser) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Blog not found');
-  }
-
   if (payload.image && isExistUser.image) {
     unlinkFile(isExistUser.image);
   }

@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { Request, Response } from 'express';
-import { NotificationService } from './Notification.service';
+import { NotificationService } from './notifications.service';
 
 const getNotificationToDb = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;

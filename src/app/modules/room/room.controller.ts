@@ -10,7 +10,7 @@ const getAllRooms = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Rooms retrieved successfully',
+    message: 'chat-room retrieved successfully',
     data: result,
   });
 });
@@ -22,7 +22,7 @@ const getRecentRooms = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Rooms retrieved successfully',
+    message: 'chat-room retrieved successfully',
     data: result,
   });
 });
@@ -42,7 +42,7 @@ const deleteRoom = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Questions and Answers retrieved successfully',
+    message: 'chat-room deleted successfully',
     data: result,
   });
 });

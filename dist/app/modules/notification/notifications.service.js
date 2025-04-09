@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
-const Notification_model_1 = require("./Notification.model");
+const notifications_model_1 = require("./notifications.model");
 const getNotificationToDb = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_model_1.Notification.find({ receiver: user.id });
-    const unredCount = yield Notification_model_1.Notification.countDocuments({
+    const result = yield notifications_model_1.Notification.find({ receiver: user.id });
+    const unredCount = yield notifications_model_1.Notification.countDocuments({
         receiver: user.id,
         read: false,
     });
@@ -24,7 +24,7 @@ const getNotificationToDb = (user) => __awaiter(void 0, void 0, void 0, function
     return data;
 });
 const readNotification = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_model_1.Notification.updateMany({ receiver: user.id }, { read: true });
+    const result = yield notifications_model_1.Notification.updateMany({ receiver: user.id }, { read: true });
     return result;
 });
 const adminNotification = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,13 +34,13 @@ const adminNotification = (query) => __awaiter(void 0, void 0, void 0, function*
     const size = parseInt(limit) || 10;
     const skip = (pages - 1) * size;
     // Set default sort order to show new data first
-    const result = yield Notification_model_1.Notification.find()
+    const result = yield notifications_model_1.Notification.find()
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(size)
         .lean();
-    const total = yield Notification_model_1.Notification.countDocuments();
-    const unread = yield Notification_model_1.Notification.countDocuments({ read: false });
+    const total = yield notifications_model_1.Notification.countDocuments();
+    const unread = yield notifications_model_1.Notification.countDocuments({ read: false });
     const data = {
         result,
         meta: {
@@ -53,11 +53,11 @@ const adminNotification = (query) => __awaiter(void 0, void 0, void 0, function*
     return data;
 });
 const adminReadNotification = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_model_1.Notification.updateMany({ type: 'ADMIN' }, { read: true });
+    const result = yield notifications_model_1.Notification.updateMany({ type: 'ADMIN' }, { read: true });
     return result;
 });
 const deleteAllNotifications = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_model_1.Notification.deleteMany({});
+    const result = yield notifications_model_1.Notification.deleteMany({});
     return result;
 });
 exports.NotificationService = {

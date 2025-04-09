@@ -14,16 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionController = void 0;
 const stripe_1 = require("../../../shared/stripe");
-const subscriptation_service_1 = require("./subscriptation.service");
+const subscriptions_service_1 = require("./subscriptions.service");
 const config_1 = __importDefault(require("../../../config"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const http_status_codes_1 = require("http-status-codes");
+const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const createCheckoutSessionController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.user.id;
     const { packageId } = req.body;
     try {
-        const sessionUrl = yield subscriptation_service_1.SubscriptationService.createCheckoutSessionService(userId, packageId);
+        const sessionUrl = yield subscriptions_service_1.subscriptionsService.createCheckoutSessionService(userId, packageId);
         res.status(200).json({ url: sessionUrl });
     }
     catch (error) {
@@ -34,59 +35,58 @@ const stripeWebhookController = (req, res) => __awaiter(void 0, void 0, void 0, 
     const sig = req.headers['stripe-signature'];
     try {
         const event = stripe_1.stripe.webhooks.constructEvent(req.body, sig, config_1.default.webhook_secret);
-        yield subscriptation_service_1.SubscriptationService.handleStripeWebhookService(event);
+        yield subscriptions_service_1.subscriptionsService.handleStripeWebhookService(event);
         res.status(200).send({ received: true });
     }
     catch (err) {
-        console.error('Error in Stripe webhook');
-        res.status(400).send(`Webhook Error:`);
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, `Webhook Error: ${err.message}`);
     }
 });
-const getAllSubscriptation = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllSubscriptions = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.user.id;
-    const result = yield subscriptation_service_1.SubscriptationService.getSubscribtionService(userId);
+    const result = yield subscriptions_service_1.subscriptionsService.getSubscribtionService(userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Subscriptation retrived successfully',
+        message: 'Subscriptions retrieved successfully',
         data: result,
     });
 }));
-const cancelSubscriptation = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelSubscriptions = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.user.id;
-    const result = yield subscriptation_service_1.SubscriptationService.cancelSubscriptation(userId);
+    const result = yield subscriptions_service_1.subscriptionsService.cancelSubscriptation(userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Subscriptation canceled successfully',
+        message: 'Subscriptions canceled successfully',
         data: result,
     });
 }));
 const getAllSubs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield subscriptation_service_1.SubscriptationService.getAllSubs(req.query);
+    const result = yield subscriptions_service_1.subscriptionsService.getAllSubs(req.query);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Subscriptation retrived successfully',
+        message: 'Subscriptions retrieved successfully',
         data: result,
     });
 }));
 const updateSubs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.user.id;
     const { newPackageId } = req.body;
-    const result = yield subscriptation_service_1.SubscriptationService.updateSubscriptionPlanService(userId, newPackageId);
+    const result = yield subscriptions_service_1.subscriptionsService.updateSubscriptionPlanService(userId, newPackageId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Subscriptation updated successfully',
+        message: 'Subscriptions updated successfully',
         data: result,
     });
 }));
 exports.SubscriptionController = {
     createCheckoutSessionController,
     stripeWebhookController,
-    getAllSubscriptation,
-    cancelSubscriptation,
+    getAllSubscriptions,
+    cancelSubscriptions,
     getAllSubs,
     updateSubs,
 };

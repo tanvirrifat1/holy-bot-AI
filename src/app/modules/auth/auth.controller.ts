@@ -71,18 +71,6 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const deleteAccount = catchAsync(async (req: Request, res: Response) => {
-  const user = req.user;
-  const result = await AuthService.deleteAccountToDB(user);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'Account Deleted successfully',
-    data: result,
-  });
-});
-
 const newAccessToken = catchAsync(async (req: Request, res: Response) => {
   const { token } = req.body;
   const result = await AuthService.newAccessTokenToUser(token);
@@ -115,7 +103,6 @@ export const AuthController = {
   forgetPassword,
   resetPassword,
   changePassword,
-  deleteAccount,
   newAccessToken,
   resendVerificationEmail,
 };

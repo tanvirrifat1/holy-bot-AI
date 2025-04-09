@@ -89,7 +89,6 @@ const getAllRequests = (roomId, query) => __awaiter(void 0, void 0, void 0, func
         path: 'room',
         select: 'roomName',
     })
-        // .sort({ createdAt: -1 })
         .skip(skip)
         .limit(size)
         .lean();

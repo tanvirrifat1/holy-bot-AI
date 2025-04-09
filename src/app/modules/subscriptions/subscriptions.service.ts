@@ -5,26 +5,23 @@ import { Package } from '../package/package.model';
 import { User } from '../user/user.model';
 import Stripe from 'stripe';
 import { WebhookService } from '../../../shared/webhook';
-import { Subscriptation } from './subscriptions.model';
+import { Subscription } from './subscriptions.model';
 
 const createCheckoutSessionService = async (
   userId: string,
   packageId: string
 ) => {
   try {
-    // Check if user exists
     const user = await User.findById(userId);
     if (!user) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
     }
 
-    // Check if package exists
     const plan = await Package.findById(packageId);
     if (!plan) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Package not found');
     }
 
-    // Create a checkout session for a subscription
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -91,7 +88,7 @@ const getSubscribtionService = async (userId: string) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found');
   }
 
-  const subscription = await Subscriptation.findOne({ user: userId })
+  const subscription = await Subscription.findOne({ user: userId })
     .populate({
       path: 'user',
       select: 'name email subscription',
@@ -113,7 +110,7 @@ const cancelSubscriptation = async (userId: string) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found');
   }
 
-  const subscription = await Subscriptation.findOne({ user: userId });
+  const subscription = await Subscription.findOne({ user: userId });
   if (!subscription) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscriptions not found');
   }
@@ -129,7 +126,7 @@ const cancelSubscriptation = async (userId: string) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscriptions not cancel');
   }
 
-  const updatedSub = await Subscriptation.findOneAndUpdate(
+  const updatedSub = await Subscription.findOneAndUpdate(
     { user: userId },
     { status: 'cancel' },
     { new: true }
@@ -150,8 +147,7 @@ const getAllSubs = async (query: Record<string, unknown>) => {
   const size = parseInt(limit as string) || 10;
   const skip = (pages - 1) * size;
 
-  // Fetch campaigns
-  const result = await Subscriptation.find(whereConditions)
+  const result = await Subscription.find(whereConditions)
     .populate('user', 'name email')
     .populate('package', 'name unitAmount interval')
     .sort({ createdAt: -1 })
@@ -159,7 +155,7 @@ const getAllSubs = async (query: Record<string, unknown>) => {
     .limit(size)
     .lean();
 
-  const count = await Subscriptation.countDocuments(whereConditions);
+  const count = await Subscription.countDocuments(whereConditions);
 
   return {
     result,
@@ -174,25 +170,21 @@ const updateSubscriptionPlanService = async (
   userId: string,
   newPackageId: string
 ) => {
-  // Step 1: Fetch the user
   const isUser = await User.findById(userId);
   if (!isUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found');
   }
 
-  // Step 2: Fetch the user's subscription
-  const subscription = await Subscriptation.findOne({ user: userId });
+  const subscription = await Subscription.findOne({ user: userId });
   if (!subscription) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Subscription not found');
   }
 
-  // Step 3: Fetch the new plan details
   const newPlan = await Package.findById(newPackageId);
   if (!newPlan) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'New plan not found');
   }
 
-  // Step 4: Fetch the current subscription from Stripe
   const stripeSubscription = await stripe.subscriptions.retrieve(
     subscription.subscriptionId
   );
@@ -204,7 +196,6 @@ const updateSubscriptionPlanService = async (
     );
   }
 
-  // Step 5: Update the subscription in Stripe
   const updatedStripeSubscription = await stripe.subscriptions.update(
     subscription.subscriptionId,
     {
@@ -232,8 +223,7 @@ const updateSubscriptionPlanService = async (
 
   const prorationAmount = (invoicePreview.total || 0) / 100;
 
-  // Step 7: Update the local database with the actual charged amount (proration)
-  const updatedSub = await Subscriptation.findByIdAndUpdate(
+  const updatedSub = await Subscription.findByIdAndUpdate(
     subscription._id,
     {
       plan: newPackageId,

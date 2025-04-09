@@ -12,22 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SubscriptationService = void 0;
+exports.subscriptionsService = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const stripe_1 = require("../../../shared/stripe");
 const package_model_1 = require("../package/package.model");
 const user_model_1 = require("../user/user.model");
 const webhook_1 = require("../../../shared/webhook");
-const subscriptation_model_1 = require("./subscriptation.model");
+const subscriptions_model_1 = require("./subscriptions.model");
 const createCheckoutSessionService = (userId, packageId) => __awaiter(void 0, void 0, void 0, function* () {
-    const isUser = yield user_model_1.User.findById(userId);
     try {
+        const user = yield user_model_1.User.findById(userId);
+        if (!user) {
+            throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found');
+        }
         const plan = yield package_model_1.Package.findById(packageId);
         if (!plan) {
             throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Package not found');
         }
-        // Create a checkout session for a subscription
         const session = yield stripe_1.stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -37,19 +39,21 @@ const createCheckoutSessionService = (userId, packageId) => __awaiter(void 0, vo
                 },
             ],
             mode: 'subscription',
-            success_url: process.env.SUCCESS_URL,
-            cancel_url: process.env.SUCCESS_URL,
+            success_url: process.env.SUCCESS_URL || 'https://holybot.ai/paymentsuccess',
+            cancel_url: process.env.CANCEL_URL || 'https://holybot.ai/paymentFail',
             metadata: {
                 userId,
                 packageId,
             },
-            customer_email: isUser === null || isUser === void 0 ? void 0 : isUser.email,
+            customer_email: user.email,
         });
-        // Return the checkout session URL
         return session.url;
     }
     catch (error) {
-        throw new Error('Failed to create checkout session');
+        if (error instanceof ApiError_1.default) {
+            throw error;
+        }
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, (error === null || error === void 0 ? void 0 : error.message) || 'Failed to create checkout session');
     }
 });
 const handleStripeWebhookService = (event) => __awaiter(void 0, void 0, void 0, function* () {
@@ -78,7 +82,7 @@ const getSubscribtionService = (userId) => __awaiter(void 0, void 0, void 0, fun
     if (!isUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'User not found');
     }
-    const subscription = yield subscriptation_model_1.Subscriptation.findOne({ user: userId })
+    const subscription = yield subscriptions_model_1.Subscription.findOne({ user: userId })
         .populate({
         path: 'user',
         select: 'name email subscription',
@@ -87,7 +91,7 @@ const getSubscribtionService = (userId) => __awaiter(void 0, void 0, void 0, fun
         path: 'package',
     });
     if (!subscription) {
-        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscribtion not found');
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscriptions not found');
     }
     return subscription;
 });
@@ -96,17 +100,17 @@ const cancelSubscriptation = (userId) => __awaiter(void 0, void 0, void 0, funct
     if (!isUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'User not found');
     }
-    const subscription = yield subscriptation_model_1.Subscriptation.findOne({ user: userId });
+    const subscription = yield subscriptions_model_1.Subscription.findOne({ user: userId });
     if (!subscription) {
-        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscribtion not found');
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscriptions not found');
     }
     const updatedSubscription = yield stripe_1.stripe.subscriptions.update(subscription.subscriptionId, {
         cancel_at_period_end: true,
     });
     if (!updatedSubscription) {
-        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscribtion not cancel');
+        throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscriptions not cancel');
     }
-    const updatedSub = yield subscriptation_model_1.Subscriptation.findOneAndUpdate({ user: userId }, { status: 'cancel' }, { new: true });
+    const updatedSub = yield subscriptions_model_1.Subscription.findOneAndUpdate({ user: userId }, { status: 'cancel' }, { new: true });
     return updatedSub;
 });
 const getAllSubs = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,15 +121,14 @@ const getAllSubs = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const pages = parseInt(page) || 1;
     const size = parseInt(limit) || 10;
     const skip = (pages - 1) * size;
-    // Fetch campaigns
-    const result = yield subscriptation_model_1.Subscriptation.find(whereConditions)
+    const result = yield subscriptions_model_1.Subscription.find(whereConditions)
         .populate('user', 'name email')
         .populate('package', 'name unitAmount interval')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(size)
         .lean();
-    const count = yield subscriptation_model_1.Subscriptation.countDocuments(whereConditions);
+    const count = yield subscriptions_model_1.Subscription.countDocuments(whereConditions);
     return {
         result,
         meta: {
@@ -135,47 +138,40 @@ const getAllSubs = (query) => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 const updateSubscriptionPlanService = (userId, newPackageId) => __awaiter(void 0, void 0, void 0, function* () {
-    // Step 1: Fetch the user
     const isUser = yield user_model_1.User.findById(userId);
     if (!isUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'User not found');
     }
-    // Step 2: Fetch the user's subscription
-    const subscription = yield subscriptation_model_1.Subscriptation.findOne({ user: userId });
+    const subscription = yield subscriptions_model_1.Subscription.findOne({ user: userId });
     if (!subscription) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Subscription not found');
     }
-    // Step 3: Fetch the new plan details
     const newPlan = yield package_model_1.Package.findById(newPackageId);
     if (!newPlan) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'New plan not found');
     }
-    // Step 4: Fetch the current subscription from Stripe
     const stripeSubscription = yield stripe_1.stripe.subscriptions.retrieve(subscription.subscriptionId);
     if (!stripeSubscription) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Stripe subscription not found');
     }
-    // Step 5: Update the subscription in Stripe
     const updatedStripeSubscription = yield stripe_1.stripe.subscriptions.update(subscription.subscriptionId, {
         items: [
             {
                 id: stripeSubscription.items.data[0].id,
-                price: newPlan.priceId, // The new plan's price ID
+                price: newPlan.priceId,
             },
         ],
-        proration_behavior: 'create_prorations', // Optional: set based on your requirements
+        proration_behavior: 'create_prorations',
     });
     if (!updatedStripeSubscription) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Stripe subscription update failed');
     }
-    // // Step 6: Retrieve the upcoming invoice to calculate proration
     const invoicePreview = yield stripe_1.stripe.invoices.retrieveUpcoming({
         customer: updatedStripeSubscription.customer,
         subscription: updatedStripeSubscription.id,
     });
     const prorationAmount = (invoicePreview.total || 0) / 100;
-    // Step 7: Update the local database with the actual charged amount (proration)
-    const updatedSub = yield subscriptation_model_1.Subscriptation.findByIdAndUpdate(subscription._id, {
+    const updatedSub = yield subscriptions_model_1.Subscription.findByIdAndUpdate(subscription._id, {
         plan: newPackageId,
         amount: prorationAmount,
         time: newPlan.interval,
@@ -188,7 +184,7 @@ const updateSubscriptionPlanService = (userId, newPackageId) => __awaiter(void 0
     }
     return updatedSub;
 });
-exports.SubscriptationService = {
+exports.subscriptionsService = {
     createCheckoutSessionService,
     handleStripeWebhookService,
     getSubscribtionService,

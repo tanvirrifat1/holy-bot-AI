@@ -93,7 +93,6 @@ const forgetPasswordToDB = async (email: string) => {
 //verify email
 const verifyEmailToDB = async (payload: IVerifyEmail) => {
   const { email, oneTimeCode } = payload;
-  console.log(email, oneTimeCode);
   const isExistUser = await User.findOne({ email }).select('+authentication');
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
@@ -256,15 +255,6 @@ const changePasswordToDB = async (
   await User.findOneAndUpdate({ _id: user.id }, updateData, { new: true });
 };
 
-const deleteAccountToDB = async (user: JwtPayload) => {
-  const result = await User.findByIdAndDelete(user?.id);
-  if (!result) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No User found');
-  }
-
-  return result;
-};
-
 const newAccessTokenToUser = async (token: string) => {
   // Check if the token is provided
   if (!token) {
@@ -335,7 +325,6 @@ export const AuthService = {
   forgetPasswordToDB,
   resetPasswordToDB,
   changePasswordToDB,
-  deleteAccountToDB,
   newAccessTokenToUser,
   resendVerificationEmailToDB,
 };

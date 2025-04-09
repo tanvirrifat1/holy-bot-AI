@@ -1,11 +1,12 @@
 import { USER_ROLES } from '../../../enums/user';
 import { months } from '../../../helpers/month';
-import { Subscriptation } from '../subscriptions/subscriptions.model';
+import { Subscription } from '../subscriptions/subscriptions.model';
+
 import { User } from '../user/user.model';
 
 const totalStatistics = async () => {
-  const [totalEarnings, totalUsers, totalSubscriptation] = await Promise.all([
-    Subscriptation.aggregate([
+  const [totalEarnings, totalUsers, totalSubscription] = await Promise.all([
+    Subscription.aggregate([
       { $match: { status: 'Completed' } },
       {
         $group: {
@@ -15,24 +16,22 @@ const totalStatistics = async () => {
       },
     ]).then(result => (result.length > 0 ? result[0].totalAmount : 0)),
 
-    // Total active users
     User.countDocuments({ role: USER_ROLES.USER, status: 'active' }),
 
-    // Total active products
-    Subscriptation.countDocuments({ status: 'Completed' }),
+    Subscription.countDocuments({ status: 'Completed' }),
   ]);
 
   return {
     totalEarnings,
     totalUsers,
-    totalSubscriptation,
+    totalSubscription,
   };
 };
 
 const getEarningChartData = async () => {
   const matchConditions: any = { status: 'Completed' };
 
-  const result = await Subscriptation.aggregate([
+  const result = await Subscription.aggregate([
     { $match: matchConditions },
     {
       $group: {

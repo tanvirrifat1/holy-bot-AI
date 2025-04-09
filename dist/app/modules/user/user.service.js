@@ -130,9 +130,6 @@ const updateProfileToDB = (user, payload) => __awaiter(void 0, void 0, void 0, f
     if (!isExistUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "User doesn't exist!");
     }
-    if (!isExistUser) {
-        throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Blog not found');
-    }
     if (payload.image && isExistUser.image) {
         (0, unlinkFile_1.default)(isExistUser.image);
     }

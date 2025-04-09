@@ -37,7 +37,6 @@ const getUserProfile = catchAsync(async (req: Request, res: Response) => {
 const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
-    console.log('in');
     let image;
     if (req.files && 'image' in req.files && req.files.image[0]) {
       image = `/images/${req.files.image[0].filename}`;

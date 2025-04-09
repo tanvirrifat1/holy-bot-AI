@@ -16,10 +16,10 @@ exports.NotificationController = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
-const Notification_service_1 = require("./Notification.service");
+const notifications_service_1 = require("./notifications.service");
 const getNotificationToDb = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    const result = yield Notification_service_1.NotificationService.getNotificationToDb(user);
+    const result = yield notifications_service_1.NotificationService.getNotificationToDb(user);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
@@ -28,7 +28,7 @@ const getNotificationToDb = (0, catchAsync_1.default)((req, res) => __awaiter(vo
     });
 }));
 const adminNotificationFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_service_1.NotificationService.adminNotification(req.query);
+    const result = yield notifications_service_1.NotificationService.adminNotification(req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
@@ -38,7 +38,7 @@ const adminNotificationFromDB = (0, catchAsync_1.default)((req, res) => __awaite
 }));
 const readNotification = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    const result = yield Notification_service_1.NotificationService.readNotification(user);
+    const result = yield notifications_service_1.NotificationService.readNotification(user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
@@ -47,7 +47,7 @@ const readNotification = (0, catchAsync_1.default)((req, res) => __awaiter(void 
     });
 }));
 const adminReadNotification = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_service_1.NotificationService.adminReadNotification();
+    const result = yield notifications_service_1.NotificationService.adminReadNotification();
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
@@ -56,7 +56,7 @@ const adminReadNotification = (0, catchAsync_1.default)((req, res) => __awaiter(
     });
 }));
 const deleteAllNotifications = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_service_1.NotificationService.deleteAllNotifications();
+    const result = yield notifications_service_1.NotificationService.deleteAllNotifications();
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,

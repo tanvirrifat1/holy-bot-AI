@@ -1,5 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
-import { Notification } from './Notification.model';
+import { Notification } from './notifications.model';
 
 const getNotificationToDb = async (user: JwtPayload) => {
   const result = await Notification.find({ receiver: user.id });

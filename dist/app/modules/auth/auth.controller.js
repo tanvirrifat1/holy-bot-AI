@@ -84,16 +84,6 @@ const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         message: 'Password changed successfully',
     });
 }));
-const deleteAccount = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.user;
-    const result = yield auth_service_1.AuthService.deleteAccountToDB(user);
-    (0, sendResponse_1.default)(res, {
-        success: true,
-        statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Account Deleted successfully',
-        data: result,
-    });
-}));
 const newAccessToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { token } = req.body;
     const result = yield auth_service_1.AuthService.newAccessTokenToUser(token);
@@ -120,7 +110,6 @@ exports.AuthController = {
     forgetPassword,
     resetPassword,
     changePassword,
-    deleteAccount,
     newAccessToken,
     resendVerificationEmail,
 };

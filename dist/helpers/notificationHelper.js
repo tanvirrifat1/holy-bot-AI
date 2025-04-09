@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendNotifications = void 0;
-const Notification_model_1 = require("../app/modules/Notification/Notification.model");
+const notifications_model_1 = require("../app/modules/notification/notifications.model");
 const sendNotifications = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Notification_model_1.Notification.create(data);
+    const result = yield notifications_model_1.Notification.create(data);
     //@ts-ignore
     const socketIo = global.io;
     if ((data === null || data === void 0 ? void 0 : data.type) === 'ADMIN') {
@@ -21,9 +21,6 @@ const sendNotifications = (data) => __awaiter(void 0, void 0, void 0, function* 
     else {
         socketIo.emit(`get-notification::${data === null || data === void 0 ? void 0 : data.receiver}`, result);
     }
-    // if (socketIo) {
-    //   socketIo.emit(`get-notification::${data?.receiver}`, result);
-    // }
     return result;
 });
 exports.sendNotifications = sendNotifications;

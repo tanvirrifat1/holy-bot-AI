@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Subscriptation = void 0;
+exports.Subscription = void 0;
 const mongoose_1 = require("mongoose");
-const subscribtionSchema = new mongoose_1.Schema({
+const subscriptionSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
@@ -36,4 +36,4 @@ const subscribtionSchema = new mongoose_1.Schema({
         type: String,
     },
 });
-exports.Subscriptation = (0, mongoose_1.model)('subscriptation', subscribtionSchema);
+exports.Subscription = (0, mongoose_1.model)('subscriptation', subscriptionSchema);

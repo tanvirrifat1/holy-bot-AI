@@ -23,7 +23,7 @@ const getAllRooms = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Rooms retrieved successfully',
+        message: 'chat-room retrieved successfully',
         data: result,
     });
 }));
@@ -33,7 +33,7 @@ const getRecentRooms = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Rooms retrieved successfully',
+        message: 'chat-room retrieved successfully',
         data: result,
     });
 }));
@@ -51,7 +51,7 @@ const deleteRoom = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Questions and Answers retrieved successfully',
+        message: 'chat-room deleted successfully',
         data: result,
     });
 }));

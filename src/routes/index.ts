@@ -7,7 +7,7 @@ import { PackageRoutes } from '../app/modules/package/package.route';
 import { SubscriptionRoutes } from '../app/modules/subscriptions/subscriptions.route';
 import { DashboardRoutes } from '../app/modules/dashboard/dashboard.route';
 import { RoomsRoutes } from '../app/modules/room/room.route';
-import { NotificationRoutes } from '../app/modules/Notification/Notification.route';
+import { NotificationRoutes } from '../app/modules/notification/notifications.route';
 
 const router = express.Router();
 

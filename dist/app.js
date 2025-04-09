@@ -9,18 +9,18 @@ const http_status_codes_1 = require("http-status-codes");
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const routes_1 = __importDefault(require("./routes"));
 const morgen_1 = require("./shared/morgen");
-const subscriptation_controller_1 = require("./app/modules/subscriptation/subscriptation.controller");
+const subscriptions_controller_1 = require("./app/modules/subscriptions/subscriptions.controller");
 const app = (0, express_1.default)();
 //morgan
 app.use(morgen_1.Morgan.successHandler);
 app.use(morgen_1.Morgan.errorHandler);
 //body parser
 app.use((0, cors_1.default)({
-    origin: '*', // allow to server to accept request from different origin
+    origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
     credentials: true,
 }));
 //webhook
-app.post('/webhook', express_1.default.raw({ type: 'application/json' }), subscriptation_controller_1.SubscriptionController.stripeWebhookController);
+app.post('/webhook', express_1.default.raw({ type: 'application/json' }), subscriptions_controller_1.SubscriptionController.stripeWebhookController);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 //file retrieve

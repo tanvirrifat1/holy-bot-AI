@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardService = void 0;
 const user_1 = require("../../../enums/user");
 const month_1 = require("../../../helpers/month");
-const subscriptation_model_1 = require("../subscriptation/subscriptation.model");
+const subscriptions_model_1 = require("../subscriptions/subscriptions.model");
 const user_model_1 = require("../user/user.model");
 const totalStatistics = () => __awaiter(void 0, void 0, void 0, function* () {
-    const [totalEarnings, totalUsers, totalSubscriptation] = yield Promise.all([
-        subscriptation_model_1.Subscriptation.aggregate([
+    const [totalEarnings, totalUsers, totalSubscription] = yield Promise.all([
+        subscriptions_model_1.Subscription.aggregate([
             { $match: { status: 'Completed' } },
             {
                 $group: {
@@ -25,20 +25,18 @@ const totalStatistics = () => __awaiter(void 0, void 0, void 0, function* () {
                 },
             },
         ]).then(result => (result.length > 0 ? result[0].totalAmount : 0)),
-        // Total active users
         user_model_1.User.countDocuments({ role: user_1.USER_ROLES.USER, status: 'active' }),
-        // Total active products
-        subscriptation_model_1.Subscriptation.countDocuments({ status: 'Completed' }),
+        subscriptions_model_1.Subscription.countDocuments({ status: 'Completed' }),
     ]);
     return {
         totalEarnings,
         totalUsers,
-        totalSubscriptation,
+        totalSubscription,
     };
 });
 const getEarningChartData = () => __awaiter(void 0, void 0, void 0, function* () {
     const matchConditions = { status: 'Completed' };
-    const result = yield subscriptation_model_1.Subscriptation.aggregate([
+    const result = yield subscriptions_model_1.Subscription.aggregate([
         { $match: matchConditions },
         {
             $group: {

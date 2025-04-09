@@ -9,10 +9,10 @@ const user_route_1 = require("../app/modules/user/user.route");
 const request_route_1 = require("../app/modules/request/request.route");
 const setting_route_1 = require("../app/modules/setting/setting.route");
 const package_route_1 = require("../app/modules/package/package.route");
-const subscriptation_route_1 = require("../app/modules/subscriptation/subscriptation.route");
+const subscriptions_route_1 = require("../app/modules/subscriptions/subscriptions.route");
 const dashboard_route_1 = require("../app/modules/dashboard/dashboard.route");
 const room_route_1 = require("../app/modules/room/room.route");
-const Notification_route_1 = require("../app/modules/Notification/Notification.route");
+const notifications_route_1 = require("../app/modules/notification/notifications.route");
 const router = express_1.default.Router();
 const apiRoutes = [
     { path: '/user', route: user_route_1.UserRoutes },
@@ -20,10 +20,10 @@ const apiRoutes = [
     { path: '/request', route: request_route_1.RequestRoutes },
     { path: '/setting', route: setting_route_1.SettingRoutes },
     { path: '/package', route: package_route_1.PackageRoutes },
-    { path: '/subscription', route: subscriptation_route_1.SubscriptionRoutes },
+    { path: '/subscription', route: subscriptions_route_1.SubscriptionRoutes },
     { path: '/dashboard', route: dashboard_route_1.DashboardRoutes },
     { path: '/room', route: room_route_1.RoomsRoutes },
-    { path: '/notification', route: Notification_route_1.NotificationRoutes },
+    { path: '/notification', route: notifications_route_1.NotificationRoutes },
 ];
 apiRoutes.forEach(route => router.use(route.path, route.route));
 exports.default = router;

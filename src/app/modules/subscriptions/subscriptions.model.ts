@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { ISubscription } from './subscriptions.interface';
 
-const subscribtionSchema = new Schema<ISubscription>({
+const subscriptionSchema = new Schema<ISubscription>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -36,4 +36,4 @@ const subscribtionSchema = new Schema<ISubscription>({
   },
 });
 
-export const Subscriptation = model('subscriptation', subscribtionSchema);
+export const Subscription = model('subscriptation', subscriptionSchema);

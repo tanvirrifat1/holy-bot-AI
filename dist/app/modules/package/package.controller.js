@@ -31,7 +31,7 @@ const getAllPackage = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Package retrived successfully',
+        message: 'Package retrieved successfully',
         data: result,
     });
 }));
@@ -58,7 +58,7 @@ const getSinglePackage = (0, catchAsync_1.default)((req, res) => __awaiter(void 
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
-        message: 'Single-Package retrived successfully',
+        message: 'Single-Package retrieved successfully',
         data: result,
     });
 }));

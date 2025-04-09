@@ -45,9 +45,9 @@ const loginUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function*
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Password is incorrect!');
     }
     //create token
-    const accessToken = jwtHelper_1.jwtHelper.createToken({ id: isExistUser._id, role: isExistUser.role, email: isExistUser.email }, config_1.default.jwt.jwt_secret, '15d');
+    const accessToken = jwtHelper_1.jwtHelper.createToken({ id: isExistUser._id, role: isExistUser.role, email: isExistUser.email }, config_1.default.jwt.jwt_secret, config_1.default.jwt.jwt_expire_in);
     //create token
-    const refreshToken = jwtHelper_1.jwtHelper.createToken({ id: isExistUser._id, role: isExistUser.role, email: isExistUser.email }, config_1.default.jwt.jwtRefreshSecret, '30d');
+    const refreshToken = jwtHelper_1.jwtHelper.createToken({ id: isExistUser._id, role: isExistUser.role, email: isExistUser.email }, config_1.default.jwt.jwt_secret, config_1.default.jwt.jwt_expire_in);
     return { accessToken, refreshToken };
 });
 //forget password
@@ -75,7 +75,6 @@ const forgetPasswordToDB = (email) => __awaiter(void 0, void 0, void 0, function
 const verifyEmailToDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { email, oneTimeCode } = payload;
-    console.log(email, oneTimeCode);
     const isExistUser = yield user_model_1.User.findOne({ email }).select('+authentication');
     if (!isExistUser) {
         throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "User doesn't exist!");
@@ -178,13 +177,6 @@ const changePasswordToDB = (user, payload) => __awaiter(void 0, void 0, void 0, 
     };
     yield user_model_1.User.findOneAndUpdate({ _id: user.id }, updateData, { new: true });
 });
-const deleteAccountToDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.findByIdAndDelete(user === null || user === void 0 ? void 0 : user.id);
-    if (!result) {
-        throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'No User found');
-    }
-    return result;
-});
 const newAccessTokenToUser = (token) => __awaiter(void 0, void 0, void 0, function* () {
     // Check if the token is provided
     if (!token) {
@@ -230,7 +222,6 @@ exports.AuthService = {
     forgetPasswordToDB,
     resetPasswordToDB,
     changePasswordToDB,
-    deleteAccountToDB,
     newAccessTokenToUser,
     resendVerificationEmailToDB,
 };

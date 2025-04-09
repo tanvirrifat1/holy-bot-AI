@@ -39,7 +39,6 @@ const getUserProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 //update profile
 const updateProfile = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    console.log('in');
     let image;
     if (req.files && 'image' in req.files && req.files.image[0]) {
         image = `/images/${req.files.image[0].filename}`;

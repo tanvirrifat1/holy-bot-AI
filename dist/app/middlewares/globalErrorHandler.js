@@ -11,7 +11,7 @@ const logger_1 = require("../../shared/logger");
 const http_status_codes_1 = require("http-status-codes");
 const globalErrorHandler = (error, req, res, next) => {
     config_1.default.node_env === 'development'
-        ? console.log('🚨 globalErrorHandler ~~ ', error)
+        ? logger_1.errorLogger.error('🚨 globalErrorHandler ~~ ', error)
         : logger_1.errorLogger.error('🚨 globalErrorHandler ~~ ', error);
     let statusCode = 500;
     let message = 'Something went wrong';
