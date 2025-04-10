@@ -3,13 +3,12 @@ import { JwtPayload } from 'jsonwebtoken';
 import { SortOrder } from 'mongoose';
 import { USER_ROLES } from '../../../enums/user';
 import ApiError from '../../../errors/ApiError';
-import { emailHelper } from '../../../helpers/emailHelper';
-import { emailTemplate } from '../../../shared/emailTemplate';
 import generateOTP from '../../../util/generateOTP';
 import { IUser } from './user.interface';
 import { User } from './user.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 import unlinkFile from '../../../shared/unlinkFile';
+import { sendOtpEmail } from '../../../shared/sendMail';
 
 const createUserFromDb = async (payload: IUser) => {
   payload.role = USER_ROLES.USER;
@@ -26,21 +25,19 @@ const createUserFromDb = async (payload: IUser) => {
     email: result.email,
   };
 
-  const accountEmailTemplate = emailTemplate.createAccount(emailValues);
-  emailHelper.sendEmail(accountEmailTemplate);
-
-  // Update user with authentication details
   const authentication = {
     oneTimeCode: otp,
     expireAt: new Date(Date.now() + 3 * 60000),
   };
   const updatedUser = await User.findOneAndUpdate(
     { _id: result._id },
-    { $set: { authentication } }
+    { $set: { authentication } },
   );
   if (!updatedUser) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found for update');
   }
+
+  await sendOtpEmail(emailValues);
 
   if (result.status === 'active') {
     const data = {
@@ -78,7 +75,7 @@ const getAllUsers = async (query: Record<string, unknown>) => {
     const filterConditions = Object.entries(filterData).map(
       ([field, value]) => ({
         [field]: value,
-      })
+      }),
     );
     conditions.push({ $and: filterConditions });
   }
@@ -129,7 +126,7 @@ const getAllUsers = async (query: Record<string, unknown>) => {
 };
 
 const getUserProfileFromDB = async (
-  user: JwtPayload
+  user: JwtPayload,
 ): Promise<Partial<IUser>> => {
   const { id } = user;
   const isExistUser = await User.findById(id);
@@ -142,7 +139,7 @@ const getUserProfileFromDB = async (
 
 const updateProfileToDB = async (
   user: JwtPayload,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
 ): Promise<Partial<IUser | null>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);

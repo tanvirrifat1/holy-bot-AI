@@ -11,6 +11,8 @@ export default {
   stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
   google_maps: process.env.GOOGLE_MAPS,
+  mail_gun: process.env.MAIL_GUN,
+  mail_gun_domain: process.env.MAIL_GUN_DOMAIN,
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
     jwt_expire_in: process.env.JWT_EXPIRE_IN,
