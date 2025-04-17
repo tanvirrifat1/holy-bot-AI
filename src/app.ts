@@ -12,18 +12,13 @@ app.use(Morgan.successHandler);
 app.use(Morgan.errorHandler);
 
 //body parser
+
 app.use(
   cors({
-    origin: '*',
+    origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
     credentials: true,
   }),
 );
-// app.use(
-//   cors({
-//     origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
-//     credentials: true,
-//   })
-// );
 
 //webhook
 app.post(
