@@ -80,6 +80,16 @@ const getAllRequestsHistory = catchAsync(async (req, res) => {
   });
 });
 
+const getAllRequestsHistoryForAll = catchAsync(async (req, res) => {
+  const result = await RequestService.getAllRequestsHistoryForAll(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Questions retrieved successfully',
+    data: result,
+  });
+});
+
 export const RequestController = {
   createRequest,
   getAllRequests,
@@ -88,4 +98,5 @@ export const RequestController = {
   getSingleRequest,
   reactRequest,
   getAllRequestsHistory,
+  getAllRequestsHistoryForAll,
 };

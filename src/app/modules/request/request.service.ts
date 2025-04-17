@@ -50,7 +50,7 @@ const createRequest = async (payload: IRequest) => {
 
 const getAllRequests = async (
   roomId: string,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ) => {
   const isExistRoom = await Room.findById(roomId);
   if (!isExistRoom) {
@@ -70,7 +70,7 @@ const getAllRequests = async (
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({ [field]: value })
+      ([field, value]) => ({ [field]: value }),
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -123,7 +123,7 @@ const reactRequest = async (roomId: string, query: Record<string, unknown>) => {
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({ [field]: value })
+      ([field, value]) => ({ [field]: value }),
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -179,7 +179,7 @@ const getAllRequestsForAdmin = async (query: Record<string, unknown>) => {
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({ [field]: value })
+      ([field, value]) => ({ [field]: value }),
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -230,7 +230,7 @@ const deleteRequest = async (id: string) => {
 
 const getAllRequestsHistory = async (
   userId: string,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ) => {
   const { page, limit, searchTerm, ...filterData } = query;
   const anyConditions: any[] = [];
@@ -245,7 +245,7 @@ const getAllRequestsHistory = async (
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({ [field]: value })
+      ([field, value]) => ({ [field]: value }),
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -275,6 +275,39 @@ const getAllRequestsHistory = async (
   };
 };
 
+const getAllRequestsHistoryForAll = async (query: Record<string, unknown>) => {
+  const { limit, searchTerm, ...filterData } = query;
+  const conditions: any[] = [];
+
+  if (searchTerm) {
+    conditions.push({
+      $or: [{ question: { $regex: searchTerm, $options: 'i' } }],
+    });
+  }
+
+  for (const [field, value] of Object.entries(filterData)) {
+    conditions.push({ [field]: value });
+  }
+
+  const matchStage =
+    conditions.length > 0 ? { $match: { $and: conditions } } : { $match: {} };
+
+  const size = parseInt(limit as string) || 10;
+
+  const pipeline = [matchStage, { $sample: { size } }];
+
+  const result = await Request.aggregate(pipeline);
+
+  const count = await Request.countDocuments(matchStage.$match);
+
+  return {
+    result,
+    meta: {
+      total: count,
+    },
+  };
+};
+
 export const RequestService = {
   createRequest,
   getAllRequests,
@@ -283,4 +316,5 @@ export const RequestService = {
   getSingleRequest,
   reactRequest,
   getAllRequestsHistory,
+  getAllRequestsHistoryForAll,
 };

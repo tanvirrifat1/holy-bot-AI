@@ -10,37 +10,39 @@ router.post('/create', auth(USER_ROLES.USER), RequestController.createRequest);
 router.get(
   '/get-all/:id',
   auth(USER_ROLES.USER),
-  RequestController.getAllRequests
+  RequestController.getAllRequests,
 );
 
 router.get(
   '/get-recent/:id',
   auth(USER_ROLES.USER),
-  RequestController.reactRequest
+  RequestController.reactRequest,
 );
 
 router.get(
   '/get-req-history',
   auth(USER_ROLES.USER),
-  RequestController.getAllRequestsHistory
+  RequestController.getAllRequestsHistory,
 );
 
 router.get(
   '/get-all-admin',
   auth(USER_ROLES.ADMIN),
-  RequestController.getAllRequestsForAdmin
+  RequestController.getAllRequestsForAdmin,
 );
 
 router.get(
   '/get/:id',
   auth(USER_ROLES.USER, USER_ROLES.ADMIN),
-  RequestController.getSingleRequest
+  RequestController.getSingleRequest,
 );
 
 router.delete(
   '/delete/:id',
   auth(USER_ROLES.USER),
-  RequestController.deleteRequest
+  RequestController.deleteRequest,
 );
+
+router.get('/get-for-all', RequestController.getAllRequestsHistoryForAll);
 
 export const RequestRoutes = router;
