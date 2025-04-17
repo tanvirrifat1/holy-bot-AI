@@ -14,16 +14,22 @@ app.use(Morgan.errorHandler);
 //body parser
 app.use(
   cors({
-    origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
+    origin: '*',
     credentials: true,
-  })
+  }),
 );
+// app.use(
+//   cors({
+//     origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
+//     credentials: true,
+//   })
+// );
 
 //webhook
 app.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
-  SubscriptionController.stripeWebhookController
+  SubscriptionController.stripeWebhookController,
 );
 
 app.use(express.json());
@@ -38,7 +44,7 @@ app.use('/api/v1', router);
 //live response
 app.get('/', (req: Request, res: Response) => {
   res.send(
-    '<h1 style="text-align:center; color:#A55FEF; font-family:Verdana;">Hey, How can I assist you today!</h1>'
+    '<h1 style="text-align:center; color:#A55FEF; font-family:Verdana;">Hey, How can I assist you today!</h1>',
   );
 });
 
