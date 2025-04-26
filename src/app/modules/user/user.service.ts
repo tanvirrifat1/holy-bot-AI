@@ -9,8 +9,6 @@ import { User } from './user.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 import unlinkFile from '../../../shared/unlinkFile';
 import { sendOtpEmail } from '../../../shared/sendMail';
-import { emailTemplate } from '../../../shared/emailTemplete';
-import { emailHelper } from '../../../shared/emailHelper';
 
 const createUserFromDb = async (payload: IUser) => {
   payload.role = USER_ROLES.USER;
@@ -27,8 +25,8 @@ const createUserFromDb = async (payload: IUser) => {
     email: result.email,
   };
 
-  const accountEmailTemplate = emailTemplate.createAccount(emailValues);
-  emailHelper.sendEmail(accountEmailTemplate);
+  // const accountEmailTemplate = emailTemplate.createAccount(emailValues);
+  // emailHelper.sendEmail(accountEmailTemplate);
 
   const authentication = {
     oneTimeCode: otp,
@@ -42,7 +40,7 @@ const createUserFromDb = async (payload: IUser) => {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found for update');
   }
 
-  // await sendOtpEmail(emailValues);
+  await sendOtpEmail(emailValues);
 
   if (result.status === 'active') {
     const data = {
