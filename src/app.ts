@@ -15,7 +15,7 @@ app.use(Morgan.errorHandler);
 
 app.use(
   cors({
-    origin: ['https://holybot.ai', 'https://admin.holybot.ai'],
+    origin: '*',
     credentials: true,
   }),
 );
