@@ -16,6 +16,8 @@ import generateOTP from '../../../util/generateOTP';
 import { User } from '../user/user.model';
 import { ResetToken } from '../resetToken/resetToken.model';
 import { sendOtpEmail } from '../../../shared/sendMail';
+import { emailTemplate } from '../../../shared/emailTemplete';
+import { emailHelper } from '../../../shared/emailHelper';
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
@@ -80,7 +82,10 @@ const forgetPasswordToDB = async (email: string) => {
     email: isExistUser.email,
   };
 
-  await sendOtpEmail(value);
+  const forgetPassword = emailTemplate.resetPassword(value);
+  emailHelper.sendEmail(forgetPassword);
+
+  // await sendOtpEmail(value);
 
   //save to DB
   const authentication = {
@@ -304,7 +309,9 @@ const resendVerificationEmailToDB = async (email: string) => {
     email: existingUser.email,
   };
 
-  await sendOtpEmail(emailValues);
+  // await sendOtpEmail(emailValues);
+  const accountEmailTemplate = emailTemplate.createAccount(emailValues);
+  emailHelper.sendEmail(accountEmailTemplate);
 
   // Update user with authentication details
   const authentication = {

@@ -23,6 +23,11 @@ export default {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
     stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
   },
+  oauth: {
+    cid: process.env.OAUTH_CID,
+    pass: process.env.OAUTH_PASS,
+    token: process.env.OAUTH_TOKEN,
+  },
   email: {
     from: process.env.EMAIL_FROM,
     user: process.env.EMAIL_USER,
