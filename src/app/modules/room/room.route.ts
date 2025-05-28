@@ -6,20 +6,28 @@ import { RoomController } from './room.controller';
 
 const router = express.Router();
 
-router.get('/get-all-rooms', auth(USER_ROLES.USER), RoomController.getAllRooms);
+router.get(
+  '/get-all-rooms',
+  auth(USER_ROLES.USER, USER_ROLES.ADMIN),
+  RoomController.getAllRooms,
+);
 
 router.get(
   '/get-recent-rooms',
-  auth(USER_ROLES.USER),
-  RoomController.getRecentRooms
+  auth(USER_ROLES.USER, USER_ROLES.ADMIN),
+  RoomController.getRecentRooms,
 );
 
 router.get(
   '/get-all-ans/:id',
-  auth(USER_ROLES.USER),
-  RoomController.getQuestionAndAns
+  auth(USER_ROLES.USER, USER_ROLES.ADMIN),
+  RoomController.getQuestionAndAns,
 );
 
-router.delete('/delete/:id', auth(USER_ROLES.USER), RoomController.deleteRoom);
+router.delete(
+  '/delete/:id',
+  auth(USER_ROLES.USER, USER_ROLES.ADMIN),
+  RoomController.deleteRoom,
+);
 
 export const RoomsRoutes = router;
